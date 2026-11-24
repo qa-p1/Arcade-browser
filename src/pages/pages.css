@@ -1,0 +1,38 @@
+/* The extension's own layout on top of the Arcade kit (design/arcade.css). Colours and sizes come from the kit's
+   custom properties only. */
+@font-face { font-family: Inter; src: url(fonts/InterVariable.woff2) format("woff2"); font-weight: 100 900; }
+
+body { font-family: var(--font-sans); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text); }
+.page { display: flex; flex-direction: column; gap: var(--sp-16); padding: var(--sp-16); }
+.popup { width: 380px; min-height: 200px; }
+.wide { max-width: 640px; margin: 0 auto; }
+.head { display: flex; align-items: center; gap: var(--sp-10); }
+.head img { width: 24px; height: 24px; }
+.head .titles { flex: 1; min-width: 0; }
+.head .app { color: var(--muted); font-size: var(--fs-small); }
+.subject { padding: var(--sp-8) var(--sp-10); border-radius: var(--radius-sm); background: var(--sunken); color: var(--muted); font-size: var(--fs-small); overflow-wrap: anywhere; max-height: 72px; overflow: hidden; }
+.fields { display: flex; flex-direction: column; gap: var(--sp-14); }
+.field { display: flex; flex-direction: column; gap: var(--sp-4); }
+.field .input, .field .select { width: 100%; box-sizing: border-box; }
+.field .help { color: var(--muted); font-size: var(--fs-small); }
+.field.toggle { flex-direction: row; align-items: center; justify-content: space-between; gap: var(--sp-12); }
+details.advanced > summary { color: var(--muted); font-size: var(--fs-small); margin-bottom: var(--sp-10); }
+.actions { display: flex; justify-content: flex-end; gap: var(--sp-8); }
+.error { color: var(--danger-ink); font-size: var(--fs-small); }
+.state { display: flex; align-items: center; gap: var(--sp-8); }
+.state .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); }
+.state.ok .dot { background: var(--ok); }
+.state.bad .dot { background: var(--danger); }
+.job-progress { height: 4px; border-radius: var(--radius-pill); background: var(--sunken); overflow: hidden; margin-top: var(--sp-6); }
+.job-progress > div { height: 100%; background: var(--accent); }
+.job-text { margin-top: var(--sp-6); padding: var(--sp-6) var(--sp-8); border-radius: var(--radius-sm); background: var(--sunken); white-space: pre-wrap; overflow-wrap: anywhere; max-height: 160px; overflow: auto; user-select: text; }
+.empty { color: var(--muted); text-align: center; padding: var(--sp-16); }
+.row.focus { background: var(--accent-soft); }
+.link-row { display: block; text-align: left; background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; }
+.link-row:disabled { cursor: default; opacity: .6; }
+.link-row:hover:not(:disabled) .row-title { color: var(--accent-ink); }
+.textarea { height: auto; min-height: 84px; padding: var(--sp-8) var(--sp-10); resize: vertical; font-family: var(--font-sans); }
+.btn.active { color: var(--accent-ink); }
+.search-field { width: 100%; box-sizing: border-box; }
+.setting-row .btn-group { flex-wrap: nowrap; }
+.setting-row .btn-group .input { flex: 1; min-width: 0; }

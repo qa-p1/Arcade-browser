@@ -1,0 +1,101 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    name: Check (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Types
+        run: npm run typecheck
+      - name: Unit tests
+        run: npm test
+      - name: Build both browsers
+        run: npm run build
+      - name: Design kit matches Link's pinned tag
+        if: matrix.os == 'ubuntu-24.04'
+        run: python3 scripts/sync-design.py --check
+      - name: Mozilla's add-on checks on the Firefox build
+        if: matrix.os == 'ubuntu-24.04'
+        run: npx --yes web-ext@10.8.0 lint --source-dir dist/firefox
+      - uses: actions/upload-artifact@v7
+        if: matrix.os == 'ubuntu-24.04'
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
+
+  e2e:
+    name: End to end (${{ matrix.browser }}, real helper and Box)
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      # The packages are cached per runner image and package list (one of the two jobs saves them).
+      - name: Package cache key
+        id: debs
+        env:
+          PKGS: xvfb xauth libgtk-3-0 libwebkit2gtk-4.1-0 libayatana-appindicator3-1 libnss3 libgbm1 libasound2t64
+        run: |
+          echo "pkgs=$PKGS" >> "$GITHUB_OUTPUT"
+          echo "key=e2e-debs-$ImageOS-$ImageVersion-$(printf %s "$PKGS" | sha256sum | cut -c1-12)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache/restore@v6
+        id: debs-cache
+        with:
+          path: ${{ runner.temp }}/debs
+          key: ${{ steps.debs.outputs.key }}
+      - name: Runtime libraries for Arcade Box and the browsers
+        timeout-minutes: 15
+        env:
+          DEBS: ${{ runner.temp }}/debs
+        run: scripts/ci/apt-install.sh ${{ steps.debs.outputs.pkgs }}
+      - if: steps.debs-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        continue-on-error: true
+        with:
+          path: ${{ runner.temp }}/debs
+          key: ${{ steps.debs.outputs.key }}
+      - name: Released Arcade Tools (for its helper) and Arcade Box, and the pinned Firefox
+        run: python3 scripts/ci/fetch-apps.py "$RUNNER_TEMP/apps" ${{ matrix.browser == 'firefox' && '--firefox' || '' }} >> "$GITHUB_ENV"
+      - name: Chromium
+        if: matrix.browser == 'chromium'
+        # The runner image has Google Chrome, so Chromium's libraries are there; the browser itself is Playwright's.
+        run: npx playwright install chromium
+      - name: Firefox
+        if: matrix.browser == 'firefox'
+        run: '"$FIREFOX" --version'
+      - name: Tests
+        run: xvfb-run -a node --test --test-reporter=spec --test-concurrency=1 "test/e2e/${{ matrix.browser }}.test.ts"
