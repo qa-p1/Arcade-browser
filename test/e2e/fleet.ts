@@ -69,7 +69,8 @@ export async function startFleet(): Promise<Fleet> {
     GDK_BACKEND: 'x11',
     WEBKIT_DISABLE_COMPOSITING_MODE: '1',
   };
-  if (process.env.DISPLAY) env.DISPLAY = process.env.DISPLAY;
+  // The display, and the key to it: xvfb-run (CI) protects its server with an X authority file.
+  for (const key of ['DISPLAY', 'XAUTHORITY'] as const) if (process.env[key]) env[key] = process.env[key]!;
   // The browsers' settings folders, so the helper writes host files for both families.
   const chromiumProfile = join(root, 'config', 'chromium');
   const mozilla = join(root, 'home', '.mozilla');
