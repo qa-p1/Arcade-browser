@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Download the released Arcade apps in test/e2e/apps.json, check their SHA-256, and unpack the helper from
-Arcade Tools. Prints the environment the end-to-end tests read (ARCADE_HELPER, ARCADE_BOX).
+Arcade Tools. Prints the environment the end-to-end tests read (ARCADE_HELPER, ARCADE_BOX). With --firefox, also
+the pinned Firefox from Mozilla's archive (FIREFOX), so the runner image's own Firefox never decides a result.
 
-    python3 scripts/ci/fetch-apps.py OUT_DIR >> "$GITHUB_ENV"
+    python3 scripts/ci/fetch-apps.py OUT_DIR [--firefox] >> "$GITHUB_ENV"
 """
 from __future__ import annotations
 
@@ -10,6 +11,7 @@ import hashlib
 import json
 import subprocess
 import sys
+import tarfile
 import time
 import urllib.request
 from pathlib import Path
@@ -38,6 +40,20 @@ def download(url: str, dest: Path, sha256: str) -> None:
     dest.chmod(0o755)
 
 
+def firefox(out: Path, pin: dict) -> Path:
+    archive = out / pin["url"].rsplit("/", 1)[1]
+    download(pin["url"], archive, pin["sha256"])
+    folder = out / f"firefox-{pin['version']}"
+    binary = folder / "firefox" / "firefox"
+    if not binary.is_file():
+        folder.mkdir(exist_ok=True)
+        with tarfile.open(archive) as tar:
+            tar.extractall(folder, filter="tar")
+    if not binary.is_file():
+        raise SystemExit(f"{archive.name} has no firefox/firefox")
+    return binary
+
+
 def main() -> int:
     out = Path(sys.argv[1]).resolve()
     out.mkdir(parents=True, exist_ok=True)
@@ -58,6 +74,8 @@ def main() -> int:
         raise SystemExit("Arcade Tools' package has no usr/bin/arcade-helper")
     print(f"ARCADE_HELPER={helper}")
     print(f"ARCADE_BOX={paths['box']}")
+    if "--firefox" in sys.argv[2:]:
+        print(f"FIREFOX={firefox(out, apps['firefox'])}")
     return 0
 
 

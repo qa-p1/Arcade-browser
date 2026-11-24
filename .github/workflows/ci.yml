@@ -88,16 +88,14 @@ jobs:
         with:
           path: ${{ runner.temp }}/debs
           key: ${{ steps.debs.outputs.key }}
-      - name: Released Arcade Tools (for its helper) and Arcade Box
-        run: python3 scripts/ci/fetch-apps.py "$RUNNER_TEMP/apps" >> "$GITHUB_ENV"
+      - name: Released Arcade Tools (for its helper) and Arcade Box, and the pinned Firefox
+        run: python3 scripts/ci/fetch-apps.py "$RUNNER_TEMP/apps" ${{ matrix.browser == 'firefox' && '--firefox' || '' }} >> "$GITHUB_ENV"
       - name: Chromium
         if: matrix.browser == 'chromium'
         # The runner image has Google Chrome, so Chromium's libraries are there; the browser itself is Playwright's.
         run: npx playwright install chromium
       - name: Firefox
         if: matrix.browser == 'firefox'
-        run: |
-          firefox --version
-          echo "FIREFOX=$(command -v firefox)" >> "$GITHUB_ENV"
+        run: '"$FIREFOX" --version'
       - name: Tests
         run: xvfb-run -a node --test --test-reporter=spec --test-concurrency=1 "test/e2e/${{ matrix.browser }}.test.ts"

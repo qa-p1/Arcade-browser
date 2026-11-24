@@ -141,7 +141,13 @@ before(async () => {
   origin = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
   ff = await launchFirefox(binary, join(fleet.root, 'firefox-profile'), fleet.env, FIREFOX_ADDON_ID);
   tab = await open(ff);
-  await wait('the menus', async () => Object.keys(await menus()).length > 20, 60_000);
+  try {
+    await wait('the menus', async () => Object.keys(await menus()).length > 20, 60_000);
+  } catch (e) {
+    // Say why: the add-on's connection to the helper, and what its menus hold.
+    const state = await bg<unknown>('bg.arcade.state()').catch((err: Error) => `unknown (${err.message})`);
+    throw new Error(`${(e as Error).message}; the add-on's connection: ${JSON.stringify(state)}; menus: ${JSON.stringify(await menus().catch(() => null))}`);
+  }
 });
 
 after(async () => {
