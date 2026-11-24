@@ -1,0 +1,1099 @@
+{
+ "note": "Real answers from the Arcade helper (Tools 1.1.1) with Arcade Box 1.0.0 installed and no engines, captured 2026-11-24.",
+ "link": [
+  {
+   "action": "box:arcade.web.file-downloader",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Downloads",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.web.file-downloader",
+   "title": "Direct File Downloader"
+  },
+  {
+   "action": "box:arcade.web.images",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Downloads",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.web.images",
+   "title": "Download All Images"
+  },
+  {
+   "action": "box:arcade.developer.url",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Developer",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.developer.url",
+   "title": "URL Encode / Decode / Query Inspector"
+  },
+  {
+   "action": "box:arcade.web.snapshot",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Web & Network",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.web.snapshot",
+   "title": "Webpage to PDF / Screenshot"
+  },
+  {
+   "action": "box:arcade.network.site-check",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Web & Network",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.network.site-check",
+   "title": "Website Checker"
+  },
+  {
+   "action": "box:arcade.web.downloader",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Downloads",
+   "install": "engine:yt-dlp",
+   "rank": 30,
+   "reason": "yt-dlp isn't installed",
+   "ref": "arcade.box/box:arcade.web.downloader",
+   "title": "Media Downloader"
+  },
+  {
+   "action": "box:arcade.web.thumbnail",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Downloads",
+   "install": "engine:yt-dlp",
+   "rank": 30,
+   "reason": "yt-dlp isn't installed",
+   "ref": "arcade.box/box:arcade.web.thumbnail",
+   "title": "Video Thumbnail Download"
+  },
+  {
+   "action": "box:arcade.web.transcript",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Downloads",
+   "install": "engine:yt-dlp",
+   "rank": 30,
+   "reason": "yt-dlp isn't installed",
+   "ref": "arcade.box/box:arcade.web.transcript",
+   "title": "Video Transcript / Subtitles"
+  }
+ ],
+ "selection": [
+  {
+   "action": "box:arcade.text.clean#clean",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Text & Data",
+   "oneClick": true,
+   "rank": 70,
+   "ref": "arcade.box/box:arcade.text.clean#clean",
+   "title": "Clean text"
+  },
+  {
+   "action": "box:arcade.text.structured#format-json",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Text & Data",
+   "oneClick": true,
+   "rank": 70,
+   "ref": "arcade.box/box:arcade.text.structured#format-json",
+   "title": "Format JSON"
+  },
+  {
+   "action": "box.open",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "rank": 65,
+   "ref": "arcade.box/box.open",
+   "title": "More in Arcade Box…"
+  },
+  {
+   "action": "box:arcade.text.clean",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Text & Data",
+   "rank": 50,
+   "ref": "arcade.box/box:arcade.text.clean",
+   "title": "Clean Up Text"
+  },
+  {
+   "action": "box:arcade.text.structured",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Text & Data",
+   "rank": 50,
+   "ref": "arcade.box/box:arcade.text.structured",
+   "title": "JSON / YAML / TOML / XML"
+  },
+  {
+   "action": "box:arcade.barcode.barcode-generate",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "QR & Barcodes",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.barcode.barcode-generate",
+   "title": "Barcode Generator"
+  },
+  {
+   "action": "box:arcade.developer.encoding",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Developer",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.developer.encoding",
+   "title": "Base / Binary Encoding Tool"
+  },
+  {
+   "action": "box:arcade.barcode.batch",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "QR & Barcodes",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.barcode.batch",
+   "title": "Batch Barcode / Label Generator"
+  },
+  {
+   "action": "box:arcade.convert.calculator",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Converters & Calculators",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.convert.calculator",
+   "title": "Calculator"
+  },
+  {
+   "action": "box:arcade.text.case",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Text & Data",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.text.case",
+   "title": "Change Case"
+  },
+  {
+   "action": "box:arcade.convert.color",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Converters & Calculators",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.convert.color",
+   "title": "Colour Converter / Contrast"
+  },
+  {
+   "action": "box:arcade.developer.cron",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Developer",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.developer.cron",
+   "title": "Cron Builder / Explainer"
+  },
+  {
+   "action": "box:arcade.text.csv",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Text & Data",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.text.csv",
+   "title": "CSV / TSV Workbench"
+  },
+  {
+   "action": "box:arcade.convert.currency",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Converters & Calculators",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.convert.currency",
+   "title": "Currency Converter"
+  },
+  {
+   "action": "box:arcade.convert.date-duration",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Converters & Calculators",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.convert.date-duration",
+   "title": "Date & Time Calculator"
+  },
+  {
+   "action": "box:arcade.utility.emoji",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Everyday Utilities",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.utility.emoji",
+   "title": "Emoji Picker"
+  },
+  {
+   "action": "box:arcade.security.encrypt",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Files",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.security.encrypt",
+   "title": "File / Text Encryption"
+  },
+  {
+   "action": "box:arcade.developer.hash",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Developer",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.developer.hash",
+   "title": "Hash / Checksum"
+  },
+  {
+   "action": "box:arcade.developer.jwt",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Developer",
+   "oneClick": true,
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.developer.jwt",
+   "title": "JWT Inspector"
+  },
+  {
+   "action": "box:arcade.text.markdown",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Text & Data",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.text.markdown",
+   "title": "Markdown / HTML Export"
+  },
+  {
+   "action": "box:arcade.system.process",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "System",
+   "oneClick": true,
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.system.process",
+   "title": "Process Finder / Terminate"
+  },
+  {
+   "action": "box:arcade.barcode.qr-generate",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "QR & Barcodes",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.barcode.qr-generate",
+   "title": "QR Generator"
+  },
+  {
+   "action": "box:arcade.utility.random",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Everyday Utilities",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.utility.random",
+   "title": "Random Picker"
+  },
+  {
+   "action": "box:arcade.developer.regex",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Developer",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.developer.regex",
+   "title": "Regex Playground"
+  },
+  {
+   "action": "box:arcade.text.diff",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Text & Data",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.text.diff",
+   "title": "Text Diff / Merge"
+  },
+  {
+   "action": "box:arcade.text.statistics",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Text & Data",
+   "oneClick": true,
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.text.statistics",
+   "title": "Text Statistics / Readability"
+  },
+  {
+   "action": "box:arcade.convert.time-zone",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Converters & Calculators",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.convert.time-zone",
+   "title": "Time Zone Converter / Meeting Planner"
+  },
+  {
+   "action": "box:arcade.convert.units",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Converters & Calculators",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.convert.units",
+   "title": "Unit Converter"
+  },
+  {
+   "action": "box:arcade.developer.identifier",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Developer",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.developer.identifier",
+   "title": "UUID / ULID / Identifier Generator"
+  },
+  {
+   "action": "box:arcade.network.site-check",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Web & Network",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.network.site-check",
+   "title": "Website Checker"
+  },
+  {
+   "action": "box:arcade.network.rdap",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Web & Network",
+   "oneClick": true,
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.network.rdap",
+   "title": "WHOIS / Domain Lookup"
+  }
+ ],
+ "image": [
+  {
+   "action": "box.open",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "rank": 65,
+   "ref": "arcade.box/box.open",
+   "title": "More in Arcade Box…"
+  },
+  {
+   "action": "box:arcade.audio.metadata",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Audio & Speech",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.audio.metadata",
+   "title": "Audio Metadata / Cover Editor"
+  },
+  {
+   "action": "box:arcade.developer.encoding",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Developer",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.developer.encoding",
+   "title": "Base / Binary Encoding Tool"
+  },
+  {
+   "action": "box:arcade.files.rename",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Files",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.files.rename",
+   "title": "Batch Rename"
+  },
+  {
+   "action": "box:arcade.files.compare",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Files",
+   "oneClick": true,
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.files.compare",
+   "title": "File / Folder Compare"
+  },
+  {
+   "action": "box:arcade.security.encrypt",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Files",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.security.encrypt",
+   "title": "File / Text Encryption"
+  },
+  {
+   "action": "box:arcade.developer.hash",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Developer",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.developer.hash",
+   "title": "Hash / Checksum"
+  },
+  {
+   "action": "box:arcade.pdf.images-to-pdf",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "PDF",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.pdf.images-to-pdf",
+   "title": "Images to PDF"
+  },
+  {
+   "action": "box:arcade.barcode.decode",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "QR & Barcodes",
+   "job": "image.read-code",
+   "oneClick": true,
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.barcode.decode",
+   "title": "QR / Barcode Decoder"
+  },
+  {
+   "action": "box:arcade.text.diff",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Text & Data",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.text.diff",
+   "title": "Text Diff / Merge"
+  },
+  {
+   "action": "box:arcade.image.convert#jpeg-85",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Images",
+   "install": "engine:libvips",
+   "oneClick": true,
+   "rank": 70,
+   "reason": "libvips isn't installed",
+   "ref": "arcade.box/box:arcade.image.convert#jpeg-85",
+   "title": "Convert to JPEG"
+  },
+  {
+   "action": "box:arcade.image.convert#png",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Images",
+   "install": "engine:libvips",
+   "oneClick": true,
+   "rank": 70,
+   "reason": "libvips isn't installed",
+   "ref": "arcade.box/box:arcade.image.convert#png",
+   "title": "Convert to PNG"
+  },
+  {
+   "action": "box:arcade.image.convert#webp",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Images",
+   "install": "engine:libvips",
+   "oneClick": true,
+   "rank": 70,
+   "reason": "libvips isn't installed",
+   "ref": "arcade.box/box:arcade.image.convert#webp",
+   "title": "Convert to WebP"
+  },
+  {
+   "action": "box:arcade.image.convert",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Images",
+   "install": "engine:libvips",
+   "rank": 50,
+   "reason": "libvips isn't installed",
+   "ref": "arcade.box/box:arcade.image.convert",
+   "title": "Image Format Converter"
+  },
+  {
+   "action": "box:arcade.image.compress#web-200kb",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Images",
+   "install": "engine:libvips",
+   "oneClick": true,
+   "rank": 45,
+   "reason": "libvips isn't installed",
+   "ref": "arcade.box/box:arcade.image.compress#web-200kb",
+   "title": "Compress image"
+  },
+  {
+   "action": "box:arcade.image.resize#half-size",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Images",
+   "install": "engine:libvips",
+   "oneClick": true,
+   "rank": 45,
+   "reason": "libvips isn't installed",
+   "ref": "arcade.box/box:arcade.image.resize#half-size",
+   "title": "Resize to 50%"
+  },
+  {
+   "action": "box:arcade.image.redact",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Images",
+   "install": "engine:libvips",
+   "rank": 30,
+   "reason": "libvips isn't installed",
+   "ref": "arcade.box/box:arcade.image.redact",
+   "title": "Blur / Pixelate / Redact"
+  },
+  {
+   "action": "box:arcade.image.combine",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Images",
+   "install": "engine:imagemagick",
+   "rank": 30,
+   "reason": "ImageMagick 7 isn't installed",
+   "ref": "arcade.box/box:arcade.image.combine",
+   "title": "Combine Images"
+  },
+  {
+   "action": "box:arcade.image.crop",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Images",
+   "install": "engine:libvips",
+   "rank": 30,
+   "reason": "libvips isn't installed",
+   "ref": "arcade.box/box:arcade.image.crop",
+   "title": "Crop / Rotate / Flip"
+  },
+  {
+   "action": "box:arcade.image.favicon",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Images",
+   "install": "engine:imagemagick",
+   "rank": 30,
+   "reason": "ImageMagick 7 isn't installed",
+   "ref": "arcade.box/box:arcade.image.favicon",
+   "title": "Favicon / App Icon Generator"
+  },
+  {
+   "action": "box:arcade.image.compare",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Images",
+   "install": "engine:libvips",
+   "oneClick": true,
+   "rank": 30,
+   "reason": "libvips isn't installed",
+   "ref": "arcade.box/box:arcade.image.compare",
+   "title": "Image Compare / Diff"
+  },
+  {
+   "action": "box:arcade.image.compress",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Images",
+   "install": "engine:libvips",
+   "rank": 30,
+   "reason": "libvips isn't installed",
+   "ref": "arcade.box/box:arcade.image.compress",
+   "title": "Image Compressor / Optimizer"
+  },
+  {
+   "action": "box:arcade.image.metadata",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Images",
+   "install": "engine:libvips",
+   "rank": 30,
+   "reason": "libvips isn't installed",
+   "ref": "arcade.box/box:arcade.image.metadata",
+   "title": "Image Metadata / Privacy Cleaner"
+  },
+  {
+   "action": "box:arcade.image.resize",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Images",
+   "install": "engine:libvips",
+   "rank": 30,
+   "reason": "libvips isn't installed",
+   "ref": "arcade.box/box:arcade.image.resize",
+   "title": "Image Resize / Resample"
+  },
+  {
+   "action": "box:arcade.image.palette",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Images",
+   "install": "engine:libvips",
+   "oneClick": true,
+   "rank": 30,
+   "reason": "libvips isn't installed",
+   "ref": "arcade.box/box:arcade.image.palette",
+   "title": "Palette / Dominant Color Extractor"
+  },
+  {
+   "action": "box:arcade.image.passport",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Images",
+   "install": "engine:imagemagick",
+   "rank": 30,
+   "reason": "ImageMagick 7 isn't installed",
+   "ref": "arcade.box/box:arcade.image.passport",
+   "title": "Passport / ID Photo"
+  },
+  {
+   "action": "box:arcade.pdf.watermark",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "PDF",
+   "install": "engine:qpdf",
+   "rank": 30,
+   "reason": "qpdf isn't installed",
+   "ref": "arcade.box/box:arcade.pdf.watermark",
+   "title": "PDF Watermark / Stamp / Page Numbers"
+  },
+  {
+   "action": "box:arcade.pdf.sign",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "PDF",
+   "install": "engine:qpdf",
+   "rank": 30,
+   "reason": "qpdf isn't installed",
+   "ref": "arcade.box/box:arcade.pdf.sign",
+   "title": "Sign PDF"
+  },
+  {
+   "action": "box:arcade.pdf.split",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "PDF",
+   "install": "engine:qpdf",
+   "rank": 30,
+   "reason": "qpdf isn't installed",
+   "ref": "arcade.box/box:arcade.pdf.split",
+   "title": "Split / Extract PDF Pages"
+  },
+  {
+   "action": "box:arcade.image.watermark",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Images",
+   "install": "engine:imagemagick",
+   "rank": 30,
+   "reason": "ImageMagick 7 isn't installed",
+   "ref": "arcade.box/box:arcade.image.watermark",
+   "title": "Watermark Images"
+  }
+ ],
+ "page": [
+  {
+   "action": "box:arcade.web.file-downloader",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Downloads",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.web.file-downloader",
+   "title": "Direct File Downloader"
+  },
+  {
+   "action": "box:arcade.web.images",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Downloads",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.web.images",
+   "title": "Download All Images"
+  },
+  {
+   "action": "box:arcade.developer.url",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Developer",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.developer.url",
+   "title": "URL Encode / Decode / Query Inspector"
+  },
+  {
+   "action": "box:arcade.web.snapshot",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Web & Network",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.web.snapshot",
+   "title": "Webpage to PDF / Screenshot"
+  },
+  {
+   "action": "box:arcade.network.site-check",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Web & Network",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.network.site-check",
+   "title": "Website Checker"
+  },
+  {
+   "action": "box:arcade.web.downloader",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Downloads",
+   "install": "engine:yt-dlp",
+   "rank": 30,
+   "reason": "yt-dlp isn't installed",
+   "ref": "arcade.box/box:arcade.web.downloader",
+   "title": "Media Downloader"
+  },
+  {
+   "action": "box:arcade.web.thumbnail",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Downloads",
+   "install": "engine:yt-dlp",
+   "rank": 30,
+   "reason": "yt-dlp isn't installed",
+   "ref": "arcade.box/box:arcade.web.thumbnail",
+   "title": "Video Thumbnail Download"
+  },
+  {
+   "action": "box:arcade.web.transcript",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": false,
+   "group": "Downloads",
+   "install": "engine:yt-dlp",
+   "rank": 30,
+   "reason": "yt-dlp isn't installed",
+   "ref": "arcade.box/box:arcade.web.transcript",
+   "title": "Video Transcript / Subtitles"
+  }
+ ],
+ "video": [
+  {
+   "action": "box.open",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "rank": 65,
+   "ref": "arcade.box/box.open",
+   "title": "More in Arcade Box…"
+  },
+  {
+   "action": "box:arcade.developer.encoding",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Developer",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.developer.encoding",
+   "title": "Base / Binary Encoding Tool"
+  },
+  {
+   "action": "box:arcade.security.encrypt",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Files",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.security.encrypt",
+   "title": "File / Text Encryption"
+  },
+  {
+   "action": "box:arcade.developer.hash",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Developer",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.developer.hash",
+   "title": "Hash / Checksum"
+  },
+  {
+   "action": "box:arcade.text.diff",
+   "app": "arcade.box",
+   "appName": "Arcade Box",
+   "enabled": true,
+   "group": "Text & Data",
+   "rank": 30,
+   "ref": "arcade.box/box:arcade.text.diff",
+   "title": "Text Diff / Merge"
+  }
+ ],
+ "downloaderForm": {
+  "app": "Arcade Box",
+  "oneClick": false,
+  "options": {
+   "controls": [
+    {
+     "choices": [
+      {
+       "label": "Video",
+       "value": "video"
+      },
+      {
+       "label": "Audio only",
+       "value": "audio"
+      }
+     ],
+     "default": "video",
+     "key": "media",
+     "label": "Download",
+     "type": "select"
+    },
+    {
+     "choices": [
+      {
+       "label": "Best available",
+       "value": "best"
+      },
+      {
+       "label": "Up to 4K",
+       "value": "2160"
+      },
+      {
+       "label": "Up to 1440p",
+       "value": "1440"
+      },
+      {
+       "label": "Up to 1080p",
+       "value": "1080"
+      },
+      {
+       "label": "Up to 720p",
+       "value": "720"
+      },
+      {
+       "label": "Up to 480p",
+       "value": "480"
+      },
+      {
+       "label": "Up to 360p",
+       "value": "360"
+      }
+     ],
+     "default": "best",
+     "key": "quality",
+     "label": "Video quality",
+     "showWhen": {
+      "equals": "video",
+      "key": "media"
+     },
+     "type": "select"
+    },
+    {
+     "choices": [
+      {
+       "label": "Original",
+       "value": "original"
+      },
+      {
+       "label": "MP4",
+       "value": "mp4"
+      },
+      {
+       "label": "MKV",
+       "value": "mkv"
+      },
+      {
+       "label": "WebM",
+       "value": "webm"
+      }
+     ],
+     "default": "original",
+     "key": "videoFormat",
+     "label": "Format",
+     "showWhen": {
+      "equals": "video",
+      "key": "media"
+     },
+     "type": "select"
+    },
+    {
+     "choices": [
+      {
+       "label": "Original / best",
+       "value": "original"
+      },
+      {
+       "label": "MP3",
+       "value": "mp3"
+      },
+      {
+       "label": "M4A",
+       "value": "m4a"
+      },
+      {
+       "label": "FLAC",
+       "value": "flac"
+      },
+      {
+       "label": "Opus",
+       "value": "opus"
+      },
+      {
+       "label": "WAV",
+       "value": "wav"
+      }
+     ],
+     "default": "original",
+     "key": "audioFormat",
+     "label": "Audio format",
+     "showWhen": {
+      "equals": "audio",
+      "key": "media"
+     },
+     "type": "select"
+    },
+    {
+     "choices": [
+      {
+       "label": "Best",
+       "value": "best"
+      },
+      {
+       "label": "0 · best",
+       "value": "0"
+      },
+      {
+       "label": "2",
+       "value": "2"
+      },
+      {
+       "label": "5",
+       "value": "5"
+      },
+      {
+       "label": "7",
+       "value": "7"
+      },
+      {
+       "label": "10 · smaller",
+       "value": "10"
+      }
+     ],
+     "default": "5",
+     "help": "Applies when converting audio; availability depends on the source and FFmpeg.",
+     "key": "audioQuality",
+     "label": "Audio quality",
+     "showWhen": {
+      "equals": "audio",
+      "key": "media"
+     },
+     "type": "select"
+    },
+    {
+     "default": false,
+     "key": "subtitles",
+     "label": "Save subtitles when available",
+     "type": "toggle"
+    },
+    {
+     "default": false,
+     "key": "thumbnail",
+     "label": "Save thumbnail",
+     "type": "toggle"
+    },
+    {
+     "default": true,
+     "key": "metadata",
+     "label": "Embed available metadata",
+     "type": "toggle"
+    },
+    {
+     "key": "outputName",
+     "label": "Output filename",
+     "placeholder": "Leave blank for the source title",
+     "type": "text"
+    },
+    {
+     "help": "Optional. Leave empty to keep the result in Arcade Box.",
+     "key": "destinationGrant",
+     "label": "Save to",
+     "type": "directory"
+    }
+   ],
+   "input": {
+    "kind": "url",
+    "label": "Media URL"
+   },
+   "version": 1
+  },
+  "title": "Media Downloader"
+ }
+}

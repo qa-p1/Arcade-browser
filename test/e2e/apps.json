@@ -1,0 +1,15 @@
+{
+  "comment": "The released Arcade apps the end-to-end tests run against (scripts/ci/fetch-apps.py). Raise these when a new release changes what the extension sees.",
+  "tools": {
+    "repo": "qa-p1/Arcade-tools",
+    "tag": "v1.1.1",
+    "asset": "Arcade-Tools_1.1.1_amd64.AppImage",
+    "sha256": "d2033b13dc364957d1616f2ab211766c92093b3b8fa9820c86169a945b5b7888"
+  },
+  "box": {
+    "repo": "qa-p1/Arcade-box",
+    "tag": "v1.0.0",
+    "asset": "Arcade-Box_1.0.0_amd64.AppImage",
+    "sha256": "cc4a86f7511ec0e7330155118d668b994f462609542115e4d3296de947a75506"
+  }
+}

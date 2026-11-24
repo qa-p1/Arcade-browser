@@ -1,0 +1,23 @@
+{
+  "link": "v1.1.1",
+  "commit": "d04f3ca33c01e31727a829afb54f2fbc1bb03e74",
+  "files": {
+    "design/arcade.css": "2af438091a5e5d8561a9ad5b4ccfb8f514d234f8ca6e74643fb6a1dc1be5e3eb",
+    "design/icons.ts": "d0d5377d8bb3881fe82e9a20902dcbfb5960c1d660fdb0d5607eb1406d9b0cdb",
+    "design/format.ts": "9f30255bf79330c12e962502f92059df256c6360f9df844c334f912aff85b9d8",
+    "design/fonts/InterVariable.woff2": "693b77d4f32ee9b8bfc995589b5fad5e99adf2832738661f5402f9978429a8e3",
+    "design/fonts/OFL.txt": "262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a",
+    "design/glyphs/arcade.box.svg": "11405845a97dcec4150fb3943d03dbd11eeb086ded31a5cab27aa92b620838c1",
+    "design/glyphs/arcade.clipboard.svg": "bbf1518dc224aa8f8df59f432cf5eb8b6e25b1f4a4e4676fe231d84770dac156",
+    "design/glyphs/arcade.find.svg": "54c0b3e869912313a7b543175ad6bda5853b0bc8118d753e2c67de6dfdd07df9",
+    "design/glyphs/arcade.lens.svg": "ba869f44636f28ea28ebd71c8e00b8206fd1eaa28ce23cfc628b8feac1bb556b",
+    "design/glyphs/arcade.look.svg": "ce15684dfd003b0beb7e21a6e8c5a080433a0e25b804e48f024f3ba17794279b",
+    "design/glyphs/arcade.shelf.svg": "42ff3fbca18365d18875061617446aca6876bf5f740160412663d3460f81e0cc",
+    "design/glyphs/arcade.tools.svg": "dd2aa2c70bb8ebe8b597eb8440dfc032a548ff43f90f2ffd08ec00cd02b4fac2",
+    "design/glyphs/arcade.wheel.svg": "6718ccee834c345aac4b4a71ea83461412e5f4ae6f24179ab897192cf243ce63",
+    "design/icons/16.png": "de2a4f5416d7db6ba119edc496f3946fd523ccdd8ce155882cd1457d4f41fb1e",
+    "design/icons/32.png": "aade949a0b464ec950ae4bbffcb8ad8a9feac69fbd856cdf17d7ebd543e809dd",
+    "design/icons/48.png": "acb623fd84705f2b03a79034eeadfe8a2978b3f0493d2c94efd424fc6809701a",
+    "design/icons/128.png": "11c4116122beff7e838b3c6d755a64c7c49cd3a09d3d9fb59ac780c60646b550"
+  }
+}
