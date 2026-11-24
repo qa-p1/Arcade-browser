@@ -41,8 +41,29 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; }
 .wrap.dark .note.error { color: #f28b82; }
 `;
 
-const ICON_DOWNLOAD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/></svg>';
-const ICON_ARCADE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><path d="M16.5 13v7M13 16.5h7"/></svg>';
+type Shape = [tag: 'path' | 'rect', attrs: Record<string, string>];
+const ICON_DOWNLOAD: Shape[] = [['path', { d: 'M12 4v11' }], ['path', { d: 'm7 10 5 5 5-5' }], ['path', { d: 'M5 20h14' }]];
+const ICON_ARCADE: Shape[] = [
+  ['rect', { x: '4', y: '4', width: '7', height: '7', rx: '2' }],
+  ['rect', { x: '13', y: '4', width: '7', height: '7', rx: '2' }],
+  ['rect', { x: '4', y: '13', width: '7', height: '7', rx: '2' }],
+  ['path', { d: 'M16.5 13v7M13 16.5h7' }],
+];
+
+/** A line icon, built element by element (no markup from strings). */
+function icon(shapes: Shape[]): SVGSVGElement {
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg');
+  for (const [k, v] of Object.entries({ viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true' })) {
+    svg.setAttribute(k, v);
+  }
+  for (const [tag, attrs] of shapes) {
+    const el = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+    svg.append(el);
+  }
+  return svg;
+}
 
 let setup: PageSetup = { buttons: [], hover: null };
 
@@ -81,14 +102,13 @@ function makeHost(kind: string): { host: HTMLElement; wrap: HTMLDivElement } {
   return { host, wrap };
 }
 
-function pill(icon: string, label: string): HTMLButtonElement {
+function pill(shapes: Shape[], label: string): HTMLButtonElement {
   const b = document.createElement('button');
   b.type = 'button';
   b.className = 'pill';
-  b.innerHTML = icon;
   const span = document.createElement('span');
   span.textContent = label;
-  b.append(span);
+  b.append(icon(shapes), span);
   return b;
 }
 
@@ -251,10 +271,9 @@ function show(media: Media): void {
     closeMenu();
     current = media;
     const video = media instanceof HTMLVideoElement && setup.hover?.video;
-    f.button.innerHTML = video ? ICON_DOWNLOAD : ICON_ARCADE;
     const span = document.createElement('span');
     span.textContent = video ? setup.hover!.video!.label : 'Arcade';
-    f.button.append(span);
+    f.button.replaceChildren(icon(video ? ICON_DOWNLOAD : ICON_ARCADE), span);
     f.wrap.classList.toggle('dark', false);
   }
   f.host.style.display = 'block';

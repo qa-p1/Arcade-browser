@@ -1,6 +1,6 @@
 # Arcade for the browser
 
-Every Arcade app's abilities in Chrome, Edge, Brave, Vivaldi, Firefox and Zen: right-click menus, on-page
+Every Arcade app's abilities in Chrome, Edge, Brave, Vivaldi, Firefox, Zen and LibreWolf: right-click menus, on-page
 buttons, a search-everything popup and download notifications. The extension knows no app's actions itself; each item
 is an offer from the Arcade helper that Arcade Tools installs, so new apps and actions appear without an extension
 update.
@@ -21,12 +21,25 @@ section 4.7.
   page's cookies and handed to the helper as bytes (up to 48 MB); links, pages and selections go as text.
 - **Jobs:** a badge while something runs, a notification when it finishes ("Saved cat.webp", the text result, or why
   it failed), and the toolbar popup lists recent jobs with their results (copy a text result, cancel, clear).
+- **The popup:** whether Arcade is connected, recent jobs, and a search over every action of every installed app.
+  An action runs on typed text, this tab's address, a file picked there, or nothing (calculators, password
+  generator). Its options form is drawn from its card. Actions can be pinned to the top of the menus.
+- **Buttons on pages:** a Download button under videos on YouTube and Vimeo opens Box's downloader for the page. Which
+  sites, where on the page (CSS selectors) and which action are data in the Arcade catalog's `browser` section, so a
+  site that changes its layout is fixed there; the extension fetches it twice a day and keeps its own copy until
+  then. Pointing at a picture shows an Arcade button with the image actions; a video gets the downloader. The
+  buttons live in a closed shadow root (the page can't read which apps you have) and only real clicks count. When
+  an action needs an engine its app installs (yt-dlp, FFmpeg), the button says so.
+- **Finished downloads:** a notification naming what Arcade can do with the file (with buttons in Chromium); it
+  opens the list, which runs the action on the downloaded file itself.
+- **Settings:** the extension's own switches (buttons on sites, the button over pictures, download notices; all on
+  by default), and Arcade's shared settings: where results go, pinned and hidden actions, the app chosen for each
+  job.
 - **Not connected:** without Arcade Tools every menu is one "install Arcade Tools to connect…" entry, and the popup
   says what to do. The first install opens the same page.
 
-Still to come (PLAN 4.7): the popup's search over every action, settings, on-page buttons (YouTube download, image
-hover) from the catalog's `browser.sites`, live results for selected amounts, download notifications, send to
-phone, and the release workflow (zip and signed `.xpi`).
+Still to come (PLAN 4.7): live results in the menu for selected amounts and dates (needs a fast preview call in the
+helper), and "send to phone" listing your devices (Clipboard's "Send to my devices" is already in the menus).
 
 ## How it talks to Arcade
 
@@ -51,9 +64,9 @@ npm run build
 
 This writes `dist/chromium` and `dist/firefox`.
 
-- **Chrome, Edge, Brave, Vivaldi:** open the extensions page, turn on developer mode, "Load unpacked", and
+- **Chrome, Chromium, Edge, Brave, Vivaldi:** open the extensions page, turn on developer mode, "Load unpacked", and
   pick `dist/chromium`.
-- **Firefox, Zen:** open `about:debugging#/runtime/this-firefox`, "Load Temporary Add-on…", and pick
+- **Firefox, Zen, LibreWolf:** open `about:debugging#/runtime/this-firefox`, "Load Temporary Add-on…", and pick
   `dist/firefox/manifest.json`.
 
 Arcade Tools 1.1 or newer must be installed and opened once, so the helper's host files exist.
@@ -85,3 +98,25 @@ The pages use the Arcade design kit from Arcade Link at the tag in `package.json
 `scripts/sync-design.py --check` verifies.
 
 Licensed under either of [Apache-2.0](LICENSE-APACHE) or [MIT](LICENSE-MIT), at your option.
+
+## Releases
+
+Push a tag `vX.Y.Z` matching `package.json`'s version. `.github/workflows/release.yml` checks, builds and publishes:
+
+- `Arcade-browser-chromium-X.Y.Z.zip`, to load unpacked.
+- The Firefox add-on, signed by Mozilla as an unlisted add-on when the repository has the owner's AMO API keys.
+  Set them once from <https://addons.mozilla.org/developers/addon/api/key/>:
+
+  ```bash
+  gh secret set AMO_JWT_ISSUER --repo qa-p1/Arcade-browser
+  ```
+
+  ```bash
+  gh secret set AMO_JWT_SECRET --repo qa-p1/Arcade-browser
+  ```
+
+  Without them, the release carries an unsigned zip instead (regular Firefox only keeps signed add-ons).
+- The source zip that goes to Mozilla's reviewers, and `SHA256SUMS`.
+
+A tag with a prerelease part (`v0.2.0-rc.1`) is published as a prerelease and never sent to Mozilla. Firefox
+versions have no prerelease part, so an rc would use up that version number there.
