@@ -99,7 +99,12 @@ function jobRow(job: Job): HTMLElement {
       { class: 'row-main' },
       h('div', { class: 'row-title' }, job.title, job.status === 'failed' ? h('span', { class: 'badge' }, 'Failed') : null),
       h('div', { class: 'row-sub' }, `${job.app} · ${line}`),
-      running && job.fraction !== undefined ? h('div', { class: 'job-progress' }, h('div', { style: `width:${Math.round(job.fraction * 100)}%` })) : null,
+      running && typeof job.fraction === 'number'
+        ? h('div', { class: 'job-progress' }, h('div', { style: `width:${Math.round(Math.max(0, Math.min(1, job.fraction)) * 100)}%` }))
+        : // Working with no number yet (looking up a video, a step with no measure): a bar that keeps moving.
+          job.status === 'running'
+          ? h('div', { class: 'job-progress indeterminate' }, h('div'))
+          : null,
       texts.map((text) => h('div', { class: 'job-text mono' }, text)),
       files.length > 1 ? h('div', { class: 'row-sub mono' }, files.join('\n')) : null,
     ),
