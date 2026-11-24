@@ -129,6 +129,9 @@ before(async () => {
     if (req.url === '/cat.png') {
       res.writeHead(200, { 'content-type': 'image/png' });
       res.end(picture);
+    } else if (req.url?.startsWith('/watch')) {
+      res.writeHead(200, { 'content-type': 'text/html' });
+      res.end('<!doctype html><title>A video</title><ytd-watch-metadata><div id="top-level-buttons-computed"><button>Like</button></div></ytd-watch-metadata>');
     } else {
       res.writeHead(200, { 'content-type': 'text/html' });
       res.end('<!doctype html><title>Cats</title><img src="/cat.png">');
@@ -219,3 +222,25 @@ test('Firefox: without Arcade Tools there is one "install" entry', { skip: skip 
 });
 
 if (skip) test(`Firefox end-to-end: ${skip}`, { skip: true }, () => {});
+
+test('Firefox: a site’s Download button is on the page and a real click reaches the downloader', { skip: skip ?? false }, async () => {
+  const D = 'arcade.box/box:arcade.web.downloader';
+  const config = {
+    sites: [{ id: 'tube', name: 'Tube', matches: ['http://127.0.0.1/*'], buttons: [{ id: 'download', label: 'Download', action: D, anchors: ['ytd-watch-metadata #top-level-buttons-computed'], position: 'append', path: '^/watch' }] }],
+    hover: { minWidth: 120, minHeight: 80, exclude: [] },
+  };
+  await bg(`bg.arcade.setConfig(${JSON.stringify(config)}).then(() => { bg.arcade.resetPageResult(); return true; })`);
+  const { context: page } = await ff.send<{ context: string }>('browsingContext.create', { type: 'tab' });
+  await ff.send('browsingContext.navigate', { context: page, url: `${origin}/watch?v=abc`, wait: 'complete' });
+  await wait('the button', () => ff.evaluate<boolean>(page, `Boolean(document.querySelector('#top-level-buttons-computed > arcade-ext'))`), 15_000);
+  assert.equal(await ff.evaluate<boolean>(page, `document.querySelector('arcade-ext').shadowRoot === null`), true);
+  const box = await ff.evaluate<{ x: number; y: number }>(page, `(() => { const r = document.querySelector('arcade-ext').getBoundingClientRect(); return { x: Math.round(r.x + r.width / 2), y: Math.round(r.y + r.height / 2) }; })()`);
+  await ff.send('input.performActions', {
+    context: page,
+    actions: [{ type: 'pointer', id: 'mouse', actions: [{ type: 'pointerMove', x: box.x, y: box.y }, { type: 'pointerDown', button: 0 }, { type: 'pointerUp', button: 0 }] }],
+  });
+  const result = await wait('the button’s answer', () => bg<{ form?: true; needs?: string } | null>('bg.arcade.lastPageResult()'), 15_000);
+  if (result.needs) assert.match(result.needs, /yt-dlp/);
+  else assert.equal(result.form, true, JSON.stringify(result));
+  await ff.send('browsingContext.close', { context: page });
+});

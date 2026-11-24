@@ -2,6 +2,7 @@
 // for everything used here). Both builds use the Chromium names, which Firefox also provides.
 
 import type { BrowserItem, Prefs } from './protocol.ts';
+import type { PageSettings } from './sites.ts';
 
 declare const __TARGET__: 'chromium' | 'firefox';
 
@@ -22,7 +23,11 @@ export type PageMessage =
   | { type: 'form'; ref: string }
   | { type: 'run-items'; ref: string; items: BrowserItem[]; values: Record<string, unknown> }
   | { type: 'prefs' }
-  | { type: 'prefs-set'; prefs: Prefs };
+  | { type: 'prefs-set'; prefs: Prefs }
+  | { type: 'settings' }
+  | { type: 'settings-set'; settings: PageSettings }
+  | { type: 'download'; token: string }
+  | { type: 'download-run'; token: string; ref: string; values: Record<string, unknown> };
 
 /** Sends a message to the background and waits for its answer; an `{error}` answer becomes a thrown Error. */
 export async function ask<T>(message: PageMessage): Promise<T> {

@@ -113,6 +113,22 @@ before(async () => {
     if (req.url === '/cat.png') {
       res.writeHead(200, { 'content-type': 'image/png' });
       res.end(picture);
+    } else if (req.url === '/report.png') {
+      res.writeHead(200, { 'content-type': 'image/png', 'content-disposition': 'attachment; filename="report.png"' });
+      res.end(picture);
+    } else if (req.url?.startsWith('/watch')) {
+      // Laid out as a video site's page is: the catalog's anchor for the button, under the video.
+      res.writeHead(200, { 'content-type': 'text/html' });
+      res.end('<!doctype html><title>A video</title><video width="480" height="270"></video><ytd-watch-metadata><div id="top-level-buttons-computed"><button>Like</button></div></ytd-watch-metadata>');
+    } else if (req.url === '/gallery') {
+      res.writeHead(200, { 'content-type': 'text/html' });
+      res.end('<!doctype html><title>Gallery</title><body style="margin:0"><img id="big" src="/cat.png" width="400" height="300"><img id="small" src="/cat.png" width="40" height="30"></body>');
+    } else if (req.url === '/clip') {
+      res.writeHead(200, { 'content-type': 'text/html' });
+      res.end('<!doctype html><title>Clip</title><body style="margin:0"><video id="v" src="/clip.mp4" width="480" height="270"></video></body>');
+    } else if (req.url === '/files') {
+      res.writeHead(200, { 'content-type': 'text/html' });
+      res.end('<!doctype html><title>Files</title><a id="get" href="/report.png" download>Report</a>');
     } else {
       res.writeHead(200, { 'content-type': 'text/html' });
       res.end('<!doctype html><title>Cats</title><p>Hello <b>world</b></p><img src="/cat.png">');
@@ -298,3 +314,145 @@ test('pinning from the popup puts the action first in the menus; settings unpin 
 });
 
 if (skip) test(`end-to-end: ${skip}`, { skip: true }, () => {});
+
+// ---------------------------------------------------------------------------------------------------------------
+// Buttons on pages and finished downloads
+
+const DOWNLOADER = 'arcade.box/box:arcade.web.downloader';
+
+/** The catalog's section, pointed at this test's server. */
+async function useConfig(): Promise<void> {
+  const config = {
+    sites: [
+      {
+        id: 'tube',
+        name: 'Tube',
+        matches: ['http://127.0.0.1/*'],
+        buttons: [{ id: 'download', label: 'Download', action: DOWNLOADER, anchors: ['ytd-watch-metadata #top-level-buttons-computed'], position: 'append', path: '^/watch' }],
+      },
+    ],
+    hover: { minWidth: 120, minHeight: 80, video: { label: 'Download', action: DOWNLOADER }, exclude: [] },
+  };
+  await worker.evaluate((c) => (globalThis as unknown as { arcade: { setConfig: (c: unknown) => Promise<void> } }).arcade.setConfig(c), config);
+}
+
+/** After a downloader button: its form for `subject`, or (Box has no yt-dlp in the test home) the reason why not. */
+async function downloaderOpened(subject?: string): Promise<void> {
+  const result = await wait(
+    'the downloader button’s answer',
+    () => worker.evaluate(() => (globalThis as unknown as { arcade: { lastPageResult: () => unknown } }).arcade.lastPageResult()) as Promise<{ form?: true; needs?: string } | null>,
+    15_000,
+  );
+  if (result.needs) {
+    assert.match(result.needs, /yt-dlp/);
+    return;
+  }
+  assert.equal(result.form, true, JSON.stringify(result));
+  const page = context.pages().find((p) => p.url().includes('/form.html')) ?? (await context.waitForEvent('page', { predicate: (p) => p.url().includes('/form.html'), timeout: 15_000 }));
+  await page.waitForSelector('#run');
+  assert.equal(await page.textContent('.t-title-sm'), 'Media Downloader');
+  if (subject) assert.equal(await page.textContent('.subject'), subject);
+  await page.close();
+}
+
+async function resetPageResult(): Promise<void> {
+  await worker.evaluate(() => {
+    (globalThis as unknown as { arcade: { resetPageResult: () => void } }).arcade.resetPageResult();
+  });
+}
+
+test('a site’s Download button sits where the catalog says and opens the downloader for the page', { skip: skip ?? false }, async () => {
+  await useConfig();
+  const page = await context.newPage();
+  await page.goto(`${origin}/watch?v=abc`);
+  const host = page.locator('#top-level-buttons-computed > arcade-ext[data-arcade="site-download"]');
+  await host.waitFor({ timeout: 15_000 });
+  // The page can't look inside it.
+  assert.equal(await page.evaluate(() => document.querySelector('arcade-ext')!.shadowRoot), null);
+  // A click from the page's own script is not a click.
+  await resetPageResult();
+  await page.evaluate(() => (document.querySelector('arcade-ext') as HTMLElement).click());
+  await new Promise((r) => setTimeout(r, 500));
+  assert.equal(await worker.evaluate(() => (globalThis as unknown as { arcade: { lastPageResult: () => unknown } }).arcade.lastPageResult()), null);
+  await host.click();
+  await downloaderOpened(`${origin}/watch?v=abc`);
+  // Off a watch page (the site changed page without loading one), the button goes.
+  await page.evaluate(() => {
+    history.pushState({}, '', '/feed');
+    document.body.append(document.createElement('div'));
+  });
+  await host.waitFor({ state: 'detached', timeout: 5_000 });
+  await page.close();
+});
+
+test('the button over a picture lists the image actions and runs the one chosen', { skip: skip ?? false }, async () => {
+  await useConfig();
+  const offers = await worker.evaluate(() => (globalThis as unknown as { arcade: { imageOffers: () => Promise<{ ref: string; oneClick: boolean }[]> } }).arcade.imageOffers());
+  const index = offers.findIndex((o) => o.ref === 'arcade.box/box:arcade.developer.hash' || o.ref === 'arcade.box/box:arcade.image.convert#png');
+  assert.ok(index >= 0, `neither hashing nor PNG among ${JSON.stringify(offers)}`);
+  const chosen = offers[index]!;
+  const page = await context.newPage();
+  await page.goto(`${origin}/gallery`);
+  const hover = page.locator('arcade-ext[data-arcade="hover"]');
+  // Too small a picture gets no button.
+  await page.mouse.move(20, 300 + 15);
+  await page.mouse.move(400 + 20, 315);
+  await new Promise((r) => setTimeout(r, 400));
+  assert.equal(await hover.isVisible().catch(() => false), false);
+  await page.mouse.move(200, 150);
+  await hover.waitFor({ state: 'visible', timeout: 10_000 });
+  const before = await ids();
+  await hover.click();
+  // The list opens on its first entry; arrow keys move, Enter chooses.
+  await new Promise((r) => setTimeout(r, 1_000));
+  for (let i = 0; i < index; i++) await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+  if (!chosen.oneClick) await runForm();
+  const job = await finished(chosen.ref, before);
+  assert.equal(job.status, 'done', JSON.stringify(job));
+  if (chosen.ref.endsWith('hash')) {
+    const sha = createHash('sha256').update(picture).digest('hex');
+    assert.ok((job.texts ?? []).some((t) => t.includes(sha)), `no ${sha} in ${JSON.stringify(job.texts)}`);
+  }
+  await page.close();
+});
+
+test('a video gets a Download button that opens the downloader', { skip: skip ?? false }, async () => {
+  await useConfig();
+  const page = await context.newPage();
+  await page.goto(`${origin}/clip`);
+  const hover = page.locator('arcade-ext[data-arcade="hover"]');
+  await page.mouse.move(240, 135);
+  await hover.waitFor({ state: 'visible', timeout: 10_000 });
+  assert.equal((await hover.textContent()) ?? '', '', 'the label lives in the closed shadow root');
+  await resetPageResult();
+  await hover.click();
+  await downloaderOpened();
+  await page.close();
+});
+
+test('a finished download lists what Arcade can do with the file and runs it there', { skip: skip ?? false }, async () => {
+  const sessionKeys = () => worker.evaluate(async () => Object.keys(await chrome.storage.session.get(null)).filter((k) => k.startsWith('download:')));
+  const known = await sessionKeys();
+  const page = await context.newPage();
+  await page.goto(`${origin}/files`);
+  await page.click('#get');
+  const key = await wait('the download’s notice', async () => (await sessionKeys()).find((k) => !known.includes(k)), 30_000);
+  const pending = await worker.evaluate(async (k) => (await chrome.storage.session.get(k))[k], key) as { offers: { ref: string; oneClick: boolean; title: string }[] };
+  assert.ok(pending.offers.length > 0);
+  const list = await context.newPage();
+  await list.goto(`chrome-extension://${CHROME_EXTENSION_ID}/download.html#${key.slice('download:'.length)}`);
+  await list.waitForSelector('[data-ref]');
+  const hash = pending.offers.find((o) => o.ref === 'arcade.box/box:arcade.developer.hash');
+  assert.ok(hash, `no hashing among ${JSON.stringify(pending.offers.map((o) => o.ref))}`);
+  const before = await ids();
+  await list.click(`[data-ref="${hash.ref}"]`);
+  await list.waitForSelector('#run');
+  await list.click('#run');
+  const job = await finished(hash.ref, before);
+  assert.equal(job.status, 'done', JSON.stringify(job));
+  const sha = createHash('sha256').update(picture).digest('hex');
+  assert.ok((job.texts ?? []).some((t) => t.includes(sha)), `no ${sha} in ${JSON.stringify(job.texts)}`);
+  await page.close();
+  if (!list.isClosed()) await list.close();
+});

@@ -27,8 +27,10 @@ export function manifest(target: Target, version: string): Record<string, unknow
     icons,
     action: { default_title: 'Arcade', default_popup: 'popup.html', default_icon: icons },
     options_ui: { page: 'options.html', open_in_tab: true },
-    permissions: ['contextMenus', 'nativeMessaging', 'notifications', 'storage', 'alarms'],
+    permissions: ['contextMenus', 'nativeMessaging', 'notifications', 'storage', 'alarms', 'downloads'],
     host_permissions: ['<all_urls>'],
+    // The buttons on pages (a Download button under a video, the button over pictures); top frames only.
+    content_scripts: [{ matches: ['http://*/*', 'https://*/*'], js: ['content.js'], run_at: 'document_idle' }],
   };
   if (target === 'chromium') {
     return {

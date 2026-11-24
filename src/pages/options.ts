@@ -4,6 +4,7 @@
 import { ask } from '../api.ts';
 import type { Prefs } from '../protocol.ts';
 import type { Entry } from '../search.ts';
+import type { PageSettings } from '../sites.ts';
 import { fill, h } from './dom.ts';
 
 const root = document.getElementById('root')!;
@@ -39,6 +40,33 @@ function list(name: string, refs: string[], button: string, change: (ref: string
   );
 }
 
+/** The extension's own settings: they work without Arcade Tools, so they're shown even when it can't be reached. */
+function browserSection(settings: PageSettings): HTMLElement {
+  const row = (key: keyof PageSettings, label: string, desc: string) => {
+    const box = h('input', { id: `setting-${key}`, type: 'checkbox', class: 'switch' });
+    box.checked = settings[key];
+    box.addEventListener('change', () => {
+      settings = { ...settings, [key]: box.checked };
+      void ask<PageSettings>({ type: 'settings-set', settings });
+    });
+    return h('label', { class: 'setting-row' }, h('div', { class: 'setting-text' }, h('div', { class: 'setting-label' }, label), h('div', { class: 'setting-desc' }, desc)), box);
+  };
+  return h(
+    'section',
+    { class: 'section', id: 'browser' },
+    h('div', { class: 'section-head' }, h('h2', {}, 'In this browser')),
+    h(
+      'div',
+      { class: 'list' },
+      row('pageButtons', 'Buttons on sites', 'A Download button under videos on YouTube and other sites Arcade knows.'),
+      row('hoverButtons', 'Button over pictures and videos', 'Point at a picture to see what your Arcade apps can do with it.'),
+      row('downloadNotices', 'After a download', 'A notification with what Arcade can do with the file.'),
+    ),
+  );
+}
+
+let pageSettings: PageSettings | null = null;
+
 function render(prefs: Prefs): void {
   const folder = h('input', { id: 'output-folder', class: 'input', type: 'text', placeholder: 'Each action’s own place (usually next to the file, or Downloads)', value: prefs.outputFolder ?? '' });
   const askWhere = h('input', { id: 'ask-where', type: 'checkbox', class: 'switch' });
@@ -47,6 +75,7 @@ function render(prefs: Prefs): void {
   fill(
     root,
     h('div', { class: 'page-head' }, h('div', {}, h('h1', {}, 'Arcade settings'), h('div', { class: 'sub' }, 'These apply to Arcade’s menus everywhere: your file manager and your browser.'))),
+    pageSettings ? browserSection(pageSettings) : null,
     h(
       'section',
       { class: 'section' },
@@ -110,12 +139,18 @@ function render(prefs: Prefs): void {
 }
 
 async function load(): Promise<void> {
+  pageSettings = await ask<PageSettings>({ type: 'settings' });
   try {
     const [prefs, catalog] = await Promise.all([ask<Prefs>({ type: 'prefs' }), ask<{ entries: Entry[] }>({ type: 'catalog' })]);
     titles = new Map(catalog.entries.map((e) => [e.offer.ref, `${e.offer.title} · ${e.offer.appName}`]));
     render(prefs);
   } catch (e) {
-    fill(root, h('h1', {}, 'Arcade settings'), h('p', { class: 'error' }, `${(e as Error).message}. Settings need Arcade Tools; open the Arcade button for help.`));
+    fill(
+      root,
+      h('h1', {}, 'Arcade settings'),
+      browserSection(pageSettings),
+      h('p', { class: 'error' }, `${(e as Error).message}. The other settings need Arcade Tools; open the Arcade button for help.`),
+    );
   }
 }
 

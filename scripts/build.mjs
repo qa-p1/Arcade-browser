@@ -23,7 +23,7 @@ for (const target of targets) {
   rmSync(out, { recursive: true, force: true });
   mkdirSync(out, { recursive: true });
   await build({
-    entryPoints: { background: 'src/background.ts', form: 'src/pages/form.ts', popup: 'src/pages/popup.ts', options: 'src/pages/options.ts' },
+    entryPoints: { background: 'src/background.ts', form: 'src/pages/form.ts', popup: 'src/pages/popup.ts', options: 'src/pages/options.ts', download: 'src/pages/download.ts', content: 'src/content.ts' },
     absWorkingDir: root,
     outdir: out,
     bundle: true,
@@ -33,7 +33,7 @@ for (const target of targets) {
     legalComments: 'none',
     logLevel: 'warning',
   });
-  for (const page of ['form.html', 'popup.html', 'options.html', 'pages.css']) cpSync(join(root, 'src/pages', page), join(out, page));
+  for (const page of ['form.html', 'popup.html', 'options.html', 'download.html', 'pages.css']) cpSync(join(root, 'src/pages', page), join(out, page));
   cpSync(join(root, 'design/arcade.css'), join(out, 'design/arcade.css'));
   cpSync(join(root, 'design/fonts/InterVariable.woff2'), join(out, 'fonts/InterVariable.woff2'));
   cpSync(join(root, 'design/fonts/OFL.txt'), join(out, 'fonts/OFL.txt'));

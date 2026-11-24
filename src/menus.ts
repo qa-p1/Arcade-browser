@@ -161,6 +161,15 @@ export function buildTree(context: ContextKind, answers: Answer[]): MenuNode[] {
   return nodes;
 }
 
+/** The actions a short list on the page shows: those that can run now, in the menu's order, other apps' ways of
+ * doing the same job last. */
+export function shortlist(answers: Answer[], limit = QUICK_LIMIT): Answer[] {
+  return answers
+    .filter((a) => a.offer.enabled)
+    .sort((a, b) => Number(Boolean(a.offer.other)) - Number(Boolean(b.offer.other)) || order(a.offer, b.offer))
+    .slice(0, limit);
+}
+
 /** The one entry shown everywhere while the helper can't be reached. */
 export function connectTree(state: string): MenuNode {
   const title = state === 'denied' ? 'Arcade: the helper refused this extension (open Arcade)' : 'Arcade: install Arcade Tools to connect…';
