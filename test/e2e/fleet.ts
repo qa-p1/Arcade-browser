@@ -7,7 +7,7 @@
 // Without them the tests are skipped with a note, so `npm run e2e` never fails for want of the apps.
 
 import { spawn, spawnSync, type ChildProcess } from 'node:child_process';
-import { chmodSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs';
+import { chmodSync, closeSync, existsSync, openSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -63,6 +63,11 @@ export async function startFleet(): Promise<Fleet> {
     APPIMAGE_EXTRACT_AND_RUN: '1',
     ARCADE_UNPACKED: '1',
     NO_AT_BRIDGE: '1',
+    // As Arcade-Link's own end-to-end runs start Box: X11 and WebKit's software painting on a display with no
+    // compositor.
+    XDG_SESSION_TYPE: 'x11',
+    GDK_BACKEND: 'x11',
+    WEBKIT_DISABLE_COMPOSITING_MODE: '1',
   };
   if (process.env.DISPLAY) env.DISPLAY = process.env.DISPLAY;
   // The browsers' settings folders, so the helper writes host files for both families.
@@ -72,14 +77,27 @@ export async function startFleet(): Promise<Fleet> {
   mkdirSync(mozilla, { recursive: true });
 
   const card = join(root, 'arcade', 'apps', 'arcade.box.json');
-  const boxProcess: ChildProcess = spawn(box, ['--background'], { env, stdio: 'ignore', detached: true });
+  // Box's own output, shown if it doesn't start.
+  const log = openSync(join(root, 'box.log'), 'a');
+  const boxProcess: ChildProcess = spawn(box, ['--background'], { env, stdio: ['ignore', log, log], detached: true });
+  let exited = '';
+  boxProcess.on('error', (e) => (exited = `could not start: ${e.message}`));
+  boxProcess.on('exit', (code, signal) => (exited = `exited with ${signal ?? code}`));
   boxProcess.unref();
   // Box writes a short card at once and its full one (every tool) once it has started.
-  await wait(
-    'Arcade Box’s card',
-    () => existsSync(card) && (JSON.parse(readFileSync(card, 'utf8')).actions ?? []).length > 50,
-    120_000,
-  );
+  try {
+    await wait(
+      'Arcade Box’s card',
+      () => existsSync(card) && (JSON.parse(readFileSync(card, 'utf8')).actions ?? []).length > 50,
+      120_000,
+    );
+  } catch (e) {
+    const output = readFileSync(join(root, 'box.log'), 'utf8').split('\n').slice(-40).join('\n');
+    const cardState = existsSync(card) ? `a card with ${(JSON.parse(readFileSync(card, 'utf8')).actions ?? []).length} actions` : 'no card';
+    throw new Error(`${(e as Error).message} (Box ${exited || 'still running'}, ${cardState}). Box said:\n${output || '(nothing)'}`);
+  } finally {
+    closeSync(log);
+  }
 
   const integrate = spawnSync(helper, ['integrate'], { env, encoding: 'utf8', timeout: 60_000 });
   if (integrate.status !== 0) throw new Error(`arcade-helper integrate failed: ${integrate.stderr || integrate.stdout}`);

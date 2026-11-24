@@ -62,7 +62,7 @@ jobs:
       - run: npm ci
       - run: npm run build
       - name: Runtime libraries for Arcade Box
-        run: scripts/ci/apt-install.sh xvfb libgtk-3-0 libwebkit2gtk-4.1-0 libayatana-appindicator3-1
+        run: scripts/ci/apt-install.sh --no-install-recommends xvfb xauth libgtk-3-0 libwebkit2gtk-4.1-0 libayatana-appindicator3-1
       - name: Released Arcade Tools (for its helper) and Arcade Box
         run: python3 scripts/ci/fetch-apps.py "$RUNNER_TEMP/apps" >> "$GITHUB_ENV"
       - name: Chromium
