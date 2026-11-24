@@ -25,6 +25,9 @@ details.advanced > summary { color: var(--muted); font-size: var(--fs-small); ma
 .state.bad .dot { background: var(--danger); }
 .job-progress { height: 4px; border-radius: var(--radius-pill); background: var(--sunken); overflow: hidden; margin-top: var(--sp-6); }
 .job-progress > div { height: 100%; background: var(--accent); }
+.job-progress.indeterminate > div { width: 35%; animation: job-progress-slide 1.2s ease-in-out infinite; }
+@keyframes job-progress-slide { from { transform: translateX(-100%); } to { transform: translateX(290%); } }
+@media (prefers-reduced-motion: reduce) { .job-progress.indeterminate > div { animation: none; width: 100%; opacity: .4; } }
 .job-text { margin-top: var(--sp-6); padding: var(--sp-6) var(--sp-8); border-radius: var(--radius-sm); background: var(--sunken); white-space: pre-wrap; overflow-wrap: anywhere; max-height: 160px; overflow: auto; user-select: text; }
 .empty { color: var(--muted); text-align: center; padding: var(--sp-16); }
 .row.focus { background: var(--accent-soft); }
