@@ -8,9 +8,9 @@
   },
   "box": {
     "repo": "qa-p1/Arcade-box",
-    "tag": "v1.0.0",
-    "asset": "Arcade-Box_1.0.0_amd64.AppImage",
-    "sha256": "cc4a86f7511ec0e7330155118d668b994f462609542115e4d3296de947a75506"
+    "tag": "v1.0.1",
+    "asset": "Arcade-Box_1.0.1_amd64.AppImage",
+    "sha256": "b8600794d1fb2593afed197284af0a0b67d81c49cc6edd6f17af927a87d751fe"
   },
   "firefox": {
     "version": "153.7.0esr",

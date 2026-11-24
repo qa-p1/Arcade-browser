@@ -1,6 +1,6 @@
 {
-  "link": "v1.1.1",
-  "commit": "d04f3ca33c01e31727a829afb54f2fbc1bb03e74",
+  "link": "v1.1.2",
+  "commit": "0241b5cd630856430d994585e9ba6a61f7339243",
   "files": {
     "design/arcade.css": "2af438091a5e5d8561a9ad5b4ccfb8f514d234f8ca6e74643fb6a1dc1be5e3eb",
     "design/icons.ts": "d0d5377d8bb3881fe82e9a20902dcbfb5960c1d660fdb0d5607eb1406d9b0cdb",
