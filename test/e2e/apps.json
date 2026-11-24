@@ -2,9 +2,9 @@
   "comment": "The released Arcade apps (and the Firefox) the end-to-end tests run against (scripts/ci/fetch-apps.py). Raise these when a new release changes what the extension sees.",
   "tools": {
     "repo": "qa-p1/Arcade-tools",
-    "tag": "v1.1.1",
-    "asset": "Arcade-Tools_1.1.1_amd64.AppImage",
-    "sha256": "d2033b13dc364957d1616f2ab211766c92093b3b8fa9820c86169a945b5b7888"
+    "tag": "v1.1.2",
+    "asset": "Arcade-Tools_1.1.2_amd64.AppImage",
+    "sha256": "8acea88862b832c1e90813affd41f382d261ccd7d0138446cfd9ef9143f71ab3"
   },
   "box": {
     "repo": "qa-p1/Arcade-box",
