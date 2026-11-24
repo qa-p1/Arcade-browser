@@ -64,13 +64,36 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - name: Runtime libraries for Arcade Box
-        run: scripts/ci/apt-install.sh --no-install-recommends xvfb xauth libgtk-3-0 libwebkit2gtk-4.1-0 libayatana-appindicator3-1
+      # The packages are cached per runner image and package list (one of the two jobs saves them).
+      - name: Package cache key
+        id: debs
+        env:
+          PKGS: xvfb xauth libgtk-3-0 libwebkit2gtk-4.1-0 libayatana-appindicator3-1 libnss3 libgbm1 libasound2t64
+        run: |
+          echo "pkgs=$PKGS" >> "$GITHUB_OUTPUT"
+          echo "key=e2e-debs-$ImageOS-$ImageVersion-$(printf %s "$PKGS" | sha256sum | cut -c1-12)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache/restore@v6
+        id: debs-cache
+        with:
+          path: ${{ runner.temp }}/debs
+          key: ${{ steps.debs.outputs.key }}
+      - name: Runtime libraries for Arcade Box and the browsers
+        timeout-minutes: 15
+        env:
+          DEBS: ${{ runner.temp }}/debs
+        run: scripts/ci/apt-install.sh ${{ steps.debs.outputs.pkgs }}
+      - if: steps.debs-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        continue-on-error: true
+        with:
+          path: ${{ runner.temp }}/debs
+          key: ${{ steps.debs.outputs.key }}
       - name: Released Arcade Tools (for its helper) and Arcade Box
         run: python3 scripts/ci/fetch-apps.py "$RUNNER_TEMP/apps" >> "$GITHUB_ENV"
       - name: Chromium
         if: matrix.browser == 'chromium'
-        run: npx playwright install --with-deps chromium
+        # The runner image has Google Chrome, so Chromium's libraries are there; the browser itself is Playwright's.
+        run: npx playwright install chromium
       - name: Firefox
         if: matrix.browser == 'firefox'
         run: |
