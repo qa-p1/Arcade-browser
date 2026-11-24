@@ -185,6 +185,26 @@ test('Firefox: a picture on a page is fetched and hashed by Box', { skip: skip ?
   assert.ok((job.texts ?? []).some((t) => t.includes(sha)), JSON.stringify(job.texts));
 });
 
+test('Firefox: the popup searches every action and runs one on typed text', { skip: skip ?? false }, async () => {
+  const ref = 'arcade.box/box:arcade.text.structured';
+  const before = await jobIds();
+  // A fresh copy of the page (the status page opened at install is this page); the old one is marked so the wait
+  // can't see it.
+  await ff.evaluate(tab, `(() => { window.__old = true; location.reload(); return true; })()`);
+  await wait('the search field', () => ff.evaluate<boolean>(tab, `!window.__old && Boolean(document.getElementById('search'))`), 15_000);
+  await ff.evaluate(tab, `(() => { const s = document.getElementById('search'); s.value = 'json yaml'; s.dispatchEvent(new Event('input')); return true; })()`);
+  await wait('the result', () => ff.evaluate<boolean>(tab, `Boolean(document.querySelector('[data-ref="${ref}"] .link-row'))`), 15_000);
+  await ff.evaluate(tab, `(() => { document.querySelector('[data-ref="${ref}"] .link-row').click(); return true; })()`);
+  await wait('the form', () => ff.evaluate<boolean>(tab, `Boolean(document.getElementById('input-text'))`), 15_000);
+  await ff.evaluate(
+    tab,
+    `(() => { const t = document.getElementById('input-text'); t.value = '{"a": 1}'; const s = document.getElementById('f-to'); s.value = 'yaml'; s.dispatchEvent(new Event('change')); document.getElementById('run').click(); return true; })()`,
+  );
+  const job = await finished(ref, before);
+  assert.equal(job.status, 'done', JSON.stringify(job));
+  assert.match(job.texts?.[0] ?? '', /^a: 1/);
+});
+
 test('Firefox: without Arcade Tools there is one "install" entry', { skip: skip ?? false }, async () => {
   const home = mkdtempSync(join(tmpdir(), 'arcade-browser-ffbare-'));
   const bare = await launchFirefox(binary, join(home, 'profile'), { ...fleet.env, HOME: home }, FIREFOX_ADDON_ID);

@@ -5,7 +5,8 @@ import { HelperClient, HelperError, type PortLike } from './helper.ts';
 import { buildItems, ItemError, type Target } from './items.ts';
 import { finishedMessage, JobWatcher } from './jobs.ts';
 import { buildTree, connectTree, CONTEXTS, merge, type ContextKind, type MenuAction, type MenuNode } from './menus.ts';
-import { HOST_NAME, TOOLS_RELEASES, type FormAnswer, type Hello, type Job, type Offer } from './protocol.ts';
+import { HOST_NAME, MAX_DATA, TOOLS_RELEASES, type BrowserItem, type FormAnswer, type Hello, type Job, type Offer, type Prefs } from './protocol.ts';
+import { entries, PALETTE_ITEMS, type Entry } from './search.ts';
 import { rememberable, type Values } from './form.ts';
 
 const client = new HelperClient(
@@ -134,7 +135,12 @@ async function start(action: Pending['action'], target: Target, values: Values):
 }
 
 function words(e: unknown): string {
-  if (e instanceof HelperError && (e.code === 'missing' || e.code === 'denied')) return 'Arcade isn’t connected. Open the Arcade button for help.';
+  if (e instanceof HelperError && e.message === 'nothing to run on') {
+    return 'Your Arcade helper can’t run actions that need no input yet. Update Arcade Tools.';
+  }
+  if (e instanceof HelperError && (e.code === 'missing' || (e.code === 'denied' && e.message.includes('only the Arcade extension')))) {
+    return 'Arcade isn’t connected. Open the Arcade button for help.';
+  }
   if (e instanceof Error) return e.message;
   return String(e);
 }
@@ -271,7 +277,55 @@ async function answer(message: PageMessage): Promise<unknown> {
     case 'refresh-menus':
       await rebuildMenus();
       return { state: client.state };
+    case 'catalog':
+      return { entries: await catalog() };
+    case 'form':
+      return client.request<FormAnswer>('form', { ref: message.ref });
+    case 'run-items': {
+      const items = checkedItems(message.items);
+      const form = await client.request<FormAnswer>('form', { ref: message.ref });
+      const { job } = await client.request<{ job: number }>('run', { ref: message.ref, items, values: message.values }, 120_000);
+      void watcher.track(job);
+      void badge();
+      await ext.storage.local.set({ [`values:${message.ref}`]: rememberable(form.options, message.values) });
+      return { job };
+    }
+    case 'prefs':
+      return client.request<Prefs>('prefs.get');
+    case 'prefs-set': {
+      const prefs = await client.request<Prefs>('prefs.set', { prefs: message.prefs });
+      cachedCatalog = null;
+      void rebuildMenus();
+      return prefs;
+    }
   }
+}
+
+/** Items the popup built: text or bytes only (never a path on disk), within the size the helper takes. */
+function checkedItems(items: unknown): BrowserItem[] {
+  if (!Array.isArray(items)) throw new Error('No input');
+  return items.map((item) => {
+    const i = item as Record<string, unknown>;
+    if (typeof i.type !== 'string') throw new Error('An input has no type');
+    if (typeof i.text === 'string') return { type: i.type, text: i.text };
+    if (typeof i.data === 'string' && typeof i.name === 'string') {
+      if (i.data.length > (MAX_DATA / 3) * 4 + 4) throw new Error(`It’s larger than ${MAX_DATA / 1024 / 1024} MB`);
+      return { type: i.type, name: i.name, data: i.data };
+    }
+    throw new Error('An input has no text or file');
+  });
+}
+
+let cachedCatalog: { at: number; entries: Entry[] } | null = null;
+
+/** Every action of every installed app, with the kind of input the popup gives it. */
+async function catalog(): Promise<Entry[]> {
+  if (cachedCatalog && Date.now() - cachedCatalog.at < 30_000) return cachedCatalog.entries;
+  const answers = await Promise.all(
+    PALETTE_ITEMS.map((item) => client.request<{ offers: Offer[] }>('offers', { surface: 'palette', items: item ? [item] : [] }).then((r) => r.offers)),
+  );
+  cachedCatalog = { at: Date.now(), entries: entries(answers) };
+  return cachedCatalog.entries;
 }
 
 ext.runtime.onMessage.addListener((message: PageMessage, sender, sendResponse) => {

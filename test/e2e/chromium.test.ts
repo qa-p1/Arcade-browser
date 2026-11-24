@@ -212,4 +212,89 @@ test('without Arcade Tools, every menu is one "install" entry and the popup says
   }
 });
 
+async function popup(): Promise<Page> {
+  const page = await context.newPage();
+  await page.goto(`chrome-extension://${CHROME_EXTENSION_ID}/popup.html`);
+  await page.waitForSelector('#search');
+  return page;
+}
+
+test('the popup searches every action and runs one on typed text', { skip: skip ?? false }, async () => {
+  const page = await popup();
+  await page.fill('#search', 'json yaml');
+  const ref = 'arcade.box/box:arcade.text.structured';
+  await page.click(`[data-ref="${ref}"] .link-row`);
+  await page.fill('#input-text', '{"a": [1, 2]}');
+  await page.selectOption('#f-to', 'yaml');
+  const before = await ids();
+  await page.click('#run');
+  const job = await finished(ref, before);
+  assert.equal(job.status, 'done', JSON.stringify(job));
+  assert.match(job.texts?.[0] ?? '', /^a:\n\s*- 1\n\s*- 2/);
+  await page.waitForSelector('#search');
+  await page.close();
+});
+
+test('the popup runs an action on a file picked there', { skip: skip ?? false }, async () => {
+  const page = await popup();
+  await page.fill('#search', 'images to pdf');
+  const ref = 'arcade.box/box:arcade.pdf.images-to-pdf';
+  await page.click(`[data-ref="${ref}"] .link-row`);
+  await page.setInputFiles('#input-file', { name: 'cat.png', mimeType: 'image/png', buffer: picture });
+  const before = await ids();
+  await page.click('#run');
+  const job = await finished(ref, before);
+  assert.equal(job.status, 'done', JSON.stringify(job));
+  assert.match(job.files?.[0] ?? '', /\.pdf$/);
+  await page.close();
+});
+
+test('an action that needs no input runs, or says the helper is too old for it', { skip: skip ?? false }, async () => {
+  const page = await popup();
+  await page.fill('#search', 'password generator');
+  const ref = 'arcade.box/box:arcade.security.password';
+  await page.click(`[data-ref="${ref}"] .link-row`);
+  await page.waitForSelector('#run');
+  assert.equal(await page.$('#input-text, #input-url, #input-file'), null, 'no input to give');
+  const before = await ids();
+  await page.click('#run');
+  const outcome = await wait(
+    'a result or an explanation',
+    async () => {
+      const error = (await page.textContent('.error').catch(() => null)) ?? '';
+      if (error) return { error };
+      const job = (await jobs()).find((j) => j.reference === ref && !before.includes(j.id) && j.status === 'done');
+      return job ? { job } : null;
+    },
+    60_000,
+  );
+  if ('error' in outcome) assert.match(outcome.error ?? '', /can’t run actions that need no input yet/);
+  else assert.ok((outcome.job.texts ?? []).length > 0);
+  await page.close();
+});
+
+test('pinning from the popup puts the action first in the menus; settings unpin it', { skip: skip ?? false }, async () => {
+  const ref = 'arcade.box/box:arcade.text.statistics';
+  const page = await popup();
+  await page.fill('#search', 'statistics');
+  await page.click(`[data-ref="${ref}"] .row-end button`);
+  await page.waitForSelector(`[data-ref="${ref}"] .row-end button.active`);
+  await page.close();
+  const first = async () => {
+    const table = await menus(worker);
+    const selection = Object.entries(table).filter(([, a]) => a.kind === 'run' && a.context === 'selection');
+    selection.sort(([a], [b]) => Number(a.slice(1)) - Number(b.slice(1)));
+    return (selection[0]?.[1] as { ref?: string } | undefined)?.ref;
+  };
+  await wait('the pinned action on top', async () => (await first()) === ref, 30_000);
+  const settings = await context.newPage();
+  await settings.goto(`chrome-extension://${CHROME_EXTENSION_ID}/options.html`);
+  await settings.waitForSelector(`#pinned [data-ref="${ref}"]`);
+  assert.match((await settings.textContent(`#pinned [data-ref="${ref}"]`)) ?? '', /Text Statistics/);
+  await settings.click(`#pinned [data-ref="${ref}"] button`);
+  await settings.waitForSelector(`#pinned [data-ref="${ref}"]`, { state: 'detached' });
+  await wait('the menus without the pin', async () => (await first()) !== ref, 30_000);
+  await settings.close();
+});
+
 if (skip) test(`end-to-end: ${skip}`, { skip: true }, () => {});

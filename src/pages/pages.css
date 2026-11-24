@@ -28,3 +28,11 @@ details.advanced > summary { color: var(--muted); font-size: var(--fs-small); ma
 .job-text { margin-top: var(--sp-6); padding: var(--sp-6) var(--sp-8); border-radius: var(--radius-sm); background: var(--sunken); white-space: pre-wrap; overflow-wrap: anywhere; max-height: 160px; overflow: auto; user-select: text; }
 .empty { color: var(--muted); text-align: center; padding: var(--sp-16); }
 .row.focus { background: var(--accent-soft); }
+.link-row { display: block; text-align: left; background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; }
+.link-row:disabled { cursor: default; opacity: .6; }
+.link-row:hover:not(:disabled) .row-title { color: var(--accent-ink); }
+.textarea { height: auto; min-height: 84px; padding: var(--sp-8) var(--sp-10); resize: vertical; font-family: var(--font-sans); }
+.btn.active { color: var(--accent-ink); }
+.search-field { width: 100%; box-sizing: border-box; }
+.setting-row .btn-group { flex-wrap: nowrap; }
+.setting-row .btn-group .input { flex: 1; min-width: 0; }

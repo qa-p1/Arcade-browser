@@ -26,6 +26,7 @@ export function manifest(target: Target, version: string): Record<string, unknow
     description: 'Your Arcade apps on images, links, videos, selected text and pages.',
     icons,
     action: { default_title: 'Arcade', default_popup: 'popup.html', default_icon: icons },
+    options_ui: { page: 'options.html', open_in_tab: true },
     permissions: ['contextMenus', 'nativeMessaging', 'notifications', 'storage', 'alarms'],
     host_permissions: ['<all_urls>'],
   };
