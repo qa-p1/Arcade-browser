@@ -222,6 +222,11 @@ test('without Arcade Tools, every menu is one "install" entry and the popup says
     await page.goto(`chrome-extension://${CHROME_EXTENSION_ID}/popup.html`);
     await page.waitForSelector('#connect');
     assert.match((await page.textContent('#state')) ?? '', /Not connected/);
+    await page.goto(`chrome-extension://${CHROME_EXTENSION_ID}/options.html`);
+    await page.click('#test-connection');
+    await page.waitForFunction(() => document.querySelector('#connection-state')?.classList.contains('bad'));
+    assert.match((await page.textContent('#connection-fix')) ?? '', /Install Arcade Tools/);
+    assert.equal(await page.isVisible('#get-tools'), true);
   } finally {
     await bare.context.close();
     rmSync(profile, { recursive: true, force: true });
@@ -310,6 +315,30 @@ test('pinning from the popup puts the action first in the menus; settings unpin 
   await settings.click(`#pinned [data-ref="${ref}"] button`);
   await settings.waitForSelector(`#pinned [data-ref="${ref}"]`, { state: 'detached' });
   await wait('the menus without the pin', async () => (await first()) !== ref, 30_000);
+  await settings.close();
+});
+
+test('typing "a" and words in the address bar lists actions; Enter opens the chosen one for the page', { skip: skip ?? false }, async () => {
+  type Arcade = { omniboxInput: (t: string) => Promise<{ content: string; description: string }[]>; omniboxEnter: (t: string) => Promise<void> };
+  const found = await worker.evaluate((t) => (globalThis as unknown as { arcade: Arcade }).arcade.omniboxInput(t), 'json yaml');
+  assert.ok(found.length > 0, 'no suggestions');
+  assert.match(found[0]!.description, /<match>/);
+  const opened = context.waitForEvent('page');
+  await worker.evaluate((t) => (globalThis as unknown as { arcade: Arcade }).arcade.omniboxEnter(t), found[0]!.content);
+  const page = await opened;
+  await page.waitForSelector('form');
+  assert.match(page.url(), /popup\.html\?tab=1&ref=/);
+  assert.match((await page.textContent('#body')) ?? '', /JSON|YAML/i);
+  await page.close();
+});
+
+test('settings test the connection and say how to open Arcade from the keyboard', { skip: skip ?? false }, async () => {
+  const settings = await context.newPage();
+  await settings.goto(`chrome-extension://${CHROME_EXTENSION_ID}/options.html`);
+  await settings.click('#test-connection');
+  await settings.waitForFunction(() => /Connected · \d+ Arcade app/.test(document.querySelector('#connection-state')?.textContent ?? ''));
+  assert.equal(await settings.isVisible('#get-tools'), false);
+  assert.match((await settings.textContent('#keyboard-help')) ?? '', /type a and a space/);
   await settings.close();
 });
 

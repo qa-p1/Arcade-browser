@@ -19,7 +19,7 @@ import {
   type PageSetup,
 } from './sites.ts';
 import { HOST_NAME, MAX_DATA, TOOLS_RELEASES, type BrowserItem, type FormAnswer, type Hello, type Job, type Offer, type Prefs } from './protocol.ts';
-import { entries, PALETTE_ITEMS, type Entry } from './search.ts';
+import { entries, omniboxPage, omniboxSuggestions, PALETTE_ITEMS, type Entry, type OmniboxSuggestion } from './search.ts';
 import { rememberable, type Values } from './form.ts';
 
 const client = new HelperClient(
@@ -362,6 +362,31 @@ async function catalog(): Promise<Entry[]> {
   return cachedCatalog.entries;
 }
 
+// ---------------------------------------------------------------------------------------------------------------
+// The address bar: "a" then a space searches every action; Enter opens it in a tab.
+
+/** The suggestions for what is typed after "a ", and the line above them. */
+async function omniboxInput(text: string): Promise<OmniboxSuggestion[]> {
+  try {
+    const found = omniboxSuggestions(await catalog(), text, TARGET === 'chromium');
+    ext.omnibox.setDefaultSuggestion({ description: found.length || !text.trim() ? 'Search your Arcade actions' : 'No Arcade action matches; press Enter to search anyway' });
+    return found;
+  } catch {
+    ext.omnibox.setDefaultSuggestion({ description: 'Arcade isn’t connected. Press Enter for help.' });
+    return [];
+  }
+}
+
+/** Enter: the chosen action (or the search) in a new tab, with the page that was showing as its address. */
+async function omniboxEnter(text: string): Promise<void> {
+  const [tab] = await ext.tabs.query({ active: true, currentWindow: true });
+  await ext.tabs.create({ url: ext.runtime.getURL(omniboxPage(text, tab?.url ?? null)) });
+}
+
+ext.omnibox.setDefaultSuggestion({ description: 'Search your Arcade actions' });
+ext.omnibox.onInputChanged.addListener((text, suggest) => void omniboxInput(text).then(suggest));
+ext.omnibox.onInputEntered.addListener((text) => void omniboxEnter(text));
+
 const PAGE_MESSAGES = new Set(['page-setup', 'page-button', 'page-media-offers', 'page-media-run']);
 
 ext.runtime.onMessage.addListener((message: PageMessage | ContentMessage, sender, sendResponse) => {
@@ -641,6 +666,8 @@ void (async () => {
 (globalThis as { arcade?: unknown }).arcade = {
   handleClick,
   rebuildMenus,
+  omniboxInput,
+  omniboxEnter,
   jobs: () => watcher.jobs,
   state: () => ({ state: client.state, detail: client.detail }),
   /** Puts this section in place of the catalog's, as if just fetched (tests serve their own pages). */

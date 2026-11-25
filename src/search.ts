@@ -95,3 +95,38 @@ export function accept(type: string): string {
       return '';
   }
 }
+
+// ---------------------------------------------------------------------------------------------------------------
+// The address bar: "a" then a space, then words.
+
+/** What a chosen suggestion carries, so Enter on it opens that action rather than a search. */
+const PICKED = 'arcade-action:';
+
+export interface OmniboxSuggestion {
+  content: string;
+  description: string;
+}
+
+/** Chromium reads descriptions as XML (with <match> and <dim>); Firefox shows them as plain text. */
+function escapeXml(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+
+/** The best actions for what is typed, at most `limit`. */
+export function omniboxSuggestions(all: Entry[], text: string, markup: boolean, limit = 6): OmniboxSuggestion[] {
+  if (!text.trim()) return [];
+  return search(all, text, limit).map((e) => {
+    const title = `${e.offer.title} · ${e.offer.appName}`;
+    return { content: `${PICKED}${e.offer.ref}`, description: markup ? `<match>${escapeXml(e.offer.title)}</match> <dim>· ${escapeXml(e.offer.appName)}</dim>` : title };
+  });
+}
+
+/** The popup page (in a tab) that Enter opens: the chosen action, or a search for what was typed. */
+export function omniboxPage(text: string, pageUrl: string | null): string {
+  const params = new URLSearchParams({ tab: '1' });
+  const trimmed = text.trim();
+  if (trimmed.startsWith(PICKED)) params.set('ref', trimmed.slice(PICKED.length));
+  else if (trimmed) params.set('q', trimmed);
+  if (pageUrl && /^https?:/i.test(pageUrl)) params.set('page', pageUrl);
+  return `popup.html?${params}`;
+}

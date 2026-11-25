@@ -36,3 +36,12 @@ test('versions', () => {
   assert.equal(manifest('chromium', '1.0.0-rc.2').version_name, '1.0.0-rc.2');
   assert.throws(() => storeVersion('v1'));
 });
+
+test('both browsers: a key for the Arcade button and the address-bar keyword', () => {
+  for (const target of ['chromium', 'firefox'] as const) {
+    const m = manifest(target, '1.2.3') as Record<string, any>;
+    // Not Alt+Shift+A: Chrome keeps that for "focus inactive dialogs" and its own shortcuts win.
+    assert.deepEqual(m.commands, { _execute_action: { suggested_key: { default: 'Alt+Shift+X' }, description: 'Open Arcade' } }, target);
+    assert.deepEqual(m.omnibox, { keyword: 'a' }, target);
+  }
+});

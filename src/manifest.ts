@@ -5,6 +5,10 @@ import { CHROME_EXTENSION_KEY, FIREFOX_ADDON_ID } from './protocol.ts';
 
 export type Target = 'chromium' | 'firefox';
 
+/** The key that opens the Arcade button, and the address-bar keyword. */
+export const SHORTCUT = 'Alt+Shift+X';
+export const OMNIBOX_KEYWORD = 'a';
+
 /** The browser version each build needs: Chromium 120 for MV3 storage.session in pages and promise-based menus;
  * Firefox 140 (the current ESR) for `data_collection_permissions`. */
 export const MINIMUM = { chromium: '120', firefox: '140.0' } as const;
@@ -27,6 +31,11 @@ export function manifest(target: Target, version: string): Record<string, unknow
     icons,
     action: { default_title: 'Arcade', default_popup: 'popup.html', default_icon: icons },
     options_ui: { page: 'options.html', open_in_tab: true },
+    // Alt+Shift+X opens the Arcade button from the keyboard (Alt+Shift+A is Chrome's "focus inactive dialogs");
+    // people change it in the browser's extension shortcuts page.
+    commands: { _execute_action: { suggested_key: { default: SHORTCUT }, description: 'Open Arcade' } },
+    // "a" then a space in the address bar searches every Arcade action.
+    omnibox: { keyword: OMNIBOX_KEYWORD },
     permissions: ['contextMenus', 'nativeMessaging', 'notifications', 'storage', 'alarms', 'downloads'],
     host_permissions: ['<all_urls>'],
     // The buttons on pages (a Download button under a video, the button over pictures); top frames only.

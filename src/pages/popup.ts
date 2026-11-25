@@ -30,7 +30,9 @@ let status: Status | null = null;
 let catalog: Entry[] = [];
 let prefs: Prefs | null = null;
 let page: { url: string; title: string } | null = null;
-let query = '';
+let query = params.get('q') ?? '';
+// The address bar's choice: open this action once the catalog is in.
+let wanted = params.get('ref');
 const jobsEl = h('div', { class: 'list', id: 'jobs' });
 const resultsEl = h('div', { id: 'results' });
 const body = h('div', { class: 'fields', id: 'body' });
@@ -325,6 +327,9 @@ async function load(): Promise<void> {
     [catalog, prefs] = await Promise.all([ask<{ entries: Entry[] }>({ type: 'catalog' }).then((r) => r.entries), ask<Prefs>({ type: 'prefs' })]);
   }
   if (first || !body.querySelector('form')) await home();
+  const entry = wanted ? catalog.find((e) => e.offer.ref === wanted) : undefined;
+  wanted = null;
+  if (entry) await openAction(entry);
 }
 
 async function retry(): Promise<void> {
@@ -333,6 +338,9 @@ async function retry(): Promise<void> {
 }
 
 async function currentPage(): Promise<void> {
+  // Opened from the address bar: the page that was showing there.
+  const from = params.get('page');
+  if (from && /^https?:/i.test(from)) page = { url: from, title: '' };
   if (params.has('tab')) return;
   const [tab] = await ext.tabs.query({ active: true, currentWindow: true });
   if (tab?.url && /^https?:/i.test(tab.url)) page = { url: tab.url, title: tab.title ?? '' };
