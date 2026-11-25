@@ -64,3 +64,21 @@ test('inputs the popup asks for', () => {
   assert.equal(accept('file/image'), 'image/*');
   assert.equal(accept('file/any'), '');
 });
+
+test('the address bar suggests the best actions and opens the chosen one', async () => {
+  const { omniboxPage, omniboxSuggestions } = await import('../../src/search.ts');
+  const all = [
+    { offer: offer('arcade.box/web.downloader', 'Download video & audio'), item: { type: 'text/url' } },
+    { offer: offer('arcade.box/text.case', 'Change case'), item: { type: 'text/plain' } },
+  ];
+  const chromium = omniboxSuggestions(all, 'down', true);
+  assert.equal(chromium.length, 1);
+  assert.equal(chromium[0]!.content, 'arcade-action:arcade.box/web.downloader');
+  // Chromium reads the description as XML.
+  assert.equal(chromium[0]!.description, '<match>Download video &amp; audio</match> <dim>· Arcade Box</dim>');
+  assert.equal(omniboxSuggestions(all, 'down', false)[0]!.description, 'Download video & audio · Arcade Box');
+  assert.deepEqual(omniboxSuggestions(all, '   ', true), []);
+  assert.equal(omniboxPage('arcade-action:arcade.box/web.downloader', 'https://www.youtube.com/watch?v=x'), 'popup.html?tab=1&ref=arcade.box%2Fweb.downloader&page=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3Dx');
+  assert.equal(omniboxPage(' compress pdf ', 'chrome://newtab'), 'popup.html?tab=1&q=compress+pdf');
+  assert.equal(omniboxPage('', null), 'popup.html?tab=1');
+});

@@ -1,8 +1,10 @@
 // Settings: the choices the helper keeps for every Arcade menu (where results go, pinned and hidden actions, the
 // app chosen for each job). They are the same in the file manager and the browser.
 
-import { ask } from '../api.ts';
+import { ask, ext } from '../api.ts';
 import type { Prefs } from '../protocol.ts';
+import { OMNIBOX_KEYWORD } from '../manifest.ts';
+import { connectionWords, type ConnectionStatus } from '../connection.ts';
 import type { Entry } from '../search.ts';
 import type { PageSettings } from '../sites.ts';
 import { fill, h } from './dom.ts';
@@ -65,6 +67,50 @@ function browserSection(settings: PageSettings): HTMLElement {
   );
 }
 
+let shortcut = '';
+
+function connectionSection(): HTMLElement {
+  const line = h('div', { class: 'state', id: 'connection-state' }, 'Not tested yet');
+  const fix = h('p', { class: 'muted t-small', id: 'connection-fix' });
+  // .btn sets its own display, so the hidden attribute alone wouldn't hide it.
+  const get = h('a', { class: 'btn', id: 'get-tools', target: '_blank', rel: 'noreferrer', style: 'display:none' }, 'Get Arcade Tools');
+  const test = h('button', {
+    class: 'btn primary',
+    id: 'test-connection',
+    onclick: async () => {
+      test.disabled = true;
+      fill(line, 'Testing…');
+      try {
+        const words = connectionWords(await ask<ConnectionStatus>({ type: 'status' }));
+        line.className = `state ${words.ok ? 'ok' : 'bad'}`;
+        fill(line, h('span', { class: 'dot' }), words.title);
+        fix.textContent = words.fix;
+        get.style.display = words.ok ? 'none' : '';
+      } catch (e) {
+        line.className = 'state bad';
+        fill(line, h('span', { class: 'dot' }), (e as Error).message);
+      } finally {
+        test.disabled = false;
+      }
+    },
+  }, 'Test connection');
+  void ask<ConnectionStatus>({ type: 'status' }).then((s) => { get.setAttribute('href', s.tools); }).catch(() => {});
+  return h(
+    'section',
+    { class: 'section', id: 'connection' },
+    h('div', { class: 'section-head' }, h('h2', {}, 'Connection')),
+    h('div', { class: 'list' },
+      h('div', { class: 'setting-row stacked' }, line, fix, h('div', { class: 'btn-group' }, test, get)),
+      h('div', { class: 'setting-row stacked' },
+        h('div', { class: 'setting-label' }, 'From the keyboard'),
+        h('div', { class: 'setting-desc', id: 'keyboard-help' },
+          shortcut ? `${shortcut} opens the Arcade button. ` : 'Set a key for the Arcade button in your browser’s extension shortcuts. ',
+          `In the address bar, type ${OMNIBOX_KEYWORD} and a space, then what you want to do.`),
+      ),
+    ),
+  );
+}
+
 let pageSettings: PageSettings | null = null;
 
 function render(prefs: Prefs): void {
@@ -75,6 +121,7 @@ function render(prefs: Prefs): void {
   fill(
     root,
     h('div', { class: 'page-head' }, h('div', {}, h('h1', {}, 'Arcade settings'), h('div', { class: 'sub' }, 'These apply to Arcade’s menus everywhere: your file manager and your browser.'))),
+    connectionSection(),
     pageSettings ? browserSection(pageSettings) : null,
     h(
       'section',
@@ -140,6 +187,7 @@ function render(prefs: Prefs): void {
 
 async function load(): Promise<void> {
   pageSettings = await ask<PageSettings>({ type: 'settings' });
+  shortcut = (await ext.commands.getAll().catch(() => [])).find((c) => c.name === '_execute_action')?.shortcut ?? '';
   try {
     const [prefs, catalog] = await Promise.all([ask<Prefs>({ type: 'prefs' }), ask<{ entries: Entry[] }>({ type: 'catalog' })]);
     titles = new Map(catalog.entries.map((e) => [e.offer.ref, `${e.offer.title} · ${e.offer.appName}`]));
@@ -148,6 +196,7 @@ async function load(): Promise<void> {
     fill(
       root,
       h('h1', {}, 'Arcade settings'),
+      connectionSection(),
       browserSection(pageSettings),
       h('p', { class: 'error' }, `${(e as Error).message}. The other settings need Arcade Tools; open the Arcade button for help.`),
     );

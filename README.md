@@ -24,6 +24,10 @@ section 4.7.
 - **The popup:** whether Arcade is connected, recent jobs, and a search over every action of every installed app.
   An action runs on typed text, this tab's address, a file picked there, or nothing (calculators, password
   generator). Its options form is drawn from its card. Actions can be pinned to the top of the menus.
+- **From the keyboard:** Alt+Shift+X opens the popup (change it at chrome://extensions/shortcuts or Firefox's
+  Manage Extension Shortcuts; Alt+Shift+A is taken by Chrome's "focus inactive dialogs"). In the address bar, type
+  `a`, a space and what you want ("a qr", "a download"): the best match shows as you type and Enter opens its form
+  for the current page.
 - **Buttons on pages:** a Download button under videos on YouTube and Vimeo opens Box's downloader for the page. Which
   sites, where on the page (CSS selectors) and which action are data in the Arcade catalog's `browser` section, so a
   site that changes its layout is fixed there; the extension fetches it twice a day and keeps its own copy until
@@ -34,7 +38,7 @@ section 4.7.
   opens the list, which runs the action on the downloaded file itself.
 - **Settings:** the extension's own switches (buttons on sites, the button over pictures, download notices; all on
   by default), and Arcade's shared settings: where results go, pinned and hidden actions, the app chosen for each
-  job.
+  job. A Test connection button says whether Arcade answers (how many apps, which helper) and, if not, what to fix.
 - **Not connected:** without Arcade Tools every menu is one "install Arcade Tools to connect…" entry, and the popup
   says what to do. The first install opens the same page.
 
